@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">VerimatrixDemo</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="vcas_addr">VCAS addr</string>
+    <string name="vcas_port">VCAS port</string>
+    <string name="set_vcas">set VCAS</string>
+    <string name="video_uri">Video uri</string>
+    <string name="play">play Video</string>
+    <string name="file_manager">TvdFileManager</string>
+    <string name="set_default">Default</string>
+    <string name="instruction">1. setVCAS.\n\r2. play video or use TvdFileManager to play local video.</string>
+
+</resources>

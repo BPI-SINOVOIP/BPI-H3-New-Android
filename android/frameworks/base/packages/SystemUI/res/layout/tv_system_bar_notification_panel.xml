@@ -1,0 +1,102 @@
+<!--
+  Copyright (C) 2006 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<com.android.systemui.statusbar.tv.NotificationPanel 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:systemui="http://schemas.android.com/apk/res/com.android.systemui"
+    android:id="@+id/content_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    android:gravity="left" >
+
+    <LinearLayout
+        android:id="@+id/content_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="@dimen/tv_system_bar_notification_panel_marginright"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tv_system_bar_notification_panel_control_center_height"
+            android:layout_marginLeft="@dimen/tv_system_bar_notification_panel_control_center_marginleft"
+            android:layout_marginRight="@dimen/tv_system_bar_notification_panel_control_center_marginright"
+            android:layout_marginTop="@dimen/tv_system_bar_notification_panel_control_center_margintop"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/level_percent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_gravity="left"
+                android:src="@drawable/biaoti"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false" />
+
+            <Button
+                android:id="@+id/clear_all_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/status_bar_latest_events_clean"
+                android:textSize="42sp"
+                android:textStyle="bold"
+                android:layout_gravity="right"
+                android:background="@drawable/status_bar_notification_clear_all"
+                android:focusable="true"
+                android:focusableInTouchMode="true" 
+                android:clickable="true"/>
+        </LinearLayout>
+
+<!--         <ImageView -->
+<!--             android:layout_width="match_parent" -->
+<!--             android:layout_height="1dp" -->
+<!--             android:background="#FF1c1c1d" /> -->
+
+        <ScrollView
+            android:id="@+id/notification_scroller"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/tv_system_bar_notification_panel_scrollview_margintop"
+            android:layout_marginLeft="@dimen/tv_system_bar_notification_panel_scrollview_marginleft"
+            android:layout_weight="1"
+            android:nextFocusUp="@id/clear_all_button"
+            android:fadingEdge="none"
+            android:overScrollMode="ifContentScrolls"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp" >
+
+            <com.android.systemui.statusbar.policy.NotificationRowLayout
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/tv_system_bar_notification_panel_scrollview_linear_marginright"
+                android:clickable="true"
+                android:descendantFocusability="afterDescendants"
+                android:focusable="true"
+                android:nextFocusUp="@id/clear_all_button"
+                android:gravity="center_horizontal|top"
+                systemui:rowHeight="@dimen/notification_row_min_height" />
+        </ScrollView>
+    </LinearLayout>
+
+</com.android.systemui.statusbar.tv.NotificationPanel>
