@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/black"
+    tools:context=".MainActivity" >
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+		<TextView
+	        android:id="@+id/root_info"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:textSize="20sp"
+	        android:textColor="@color/white"
+	        android:text="@string/not_rooted" />
+		<ScrollView 
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:background="@color/black">
+		
+			<TableLayout android:id="@+id/appTableLayout"
+			    android:layout_width="fill_parent"
+			    android:layout_height="fill_parent"
+			    android:background="@color/black"
+			    android:stretchColumns="*"
+			    android:shrinkColumns="*" >
+			    <TableRow android:id="@+id/row1">
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/sleep_wakeup"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:src="@drawable/alarm"
+			            android:textSize="16sp"
+			            android:textColor="@color/white"
+			            android:gravity="center_vertical"
+			            android:text="@string/sleep_wakeup"></com.clock.pt1.keeptesting.ImageTextButton>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/repeat_reboot"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:src="@drawable/reboot"
+			            android:textSize="16sp"
+			            android:textColor="@color/white"
+			            android:gravity="center_vertical"
+			            android:text="@string/repeat_reboot"></com.clock.pt1.keeptesting.ImageTextButton>
+			    </TableRow>
+			    <TableRow>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/repeat_ota"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:textSize="16sp"
+			            android:src="@drawable/update"
+			            android:textColor="@color/white"
+			            android:text="@string/repeat_ota"></com.clock.pt1.keeptesting.ImageTextButton>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/ddr_test"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:src="@drawable/memory"
+			            android:textSize="16sp"
+			            android:textColor="@color/white"
+			            android:text="@string/ddr_test"></com.clock.pt1.keeptesting.ImageTextButton>
+			    </TableRow>	  
+			    <TableRow>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/battery_controll"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:textSize="16sp"
+			            android:src="@drawable/battery_controller_icon"
+			            android:textColor="@color/white"
+			            android:text="@string/battery_controller"></com.clock.pt1.keeptesting.ImageTextButton>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/storage_test"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:src="@drawable/storage"
+			            android:textSize="16sp"
+			            android:textColor="@color/white"
+			            android:text="@string/storage_test"></com.clock.pt1.keeptesting.ImageTextButton>
+			    </TableRow>	
+				<TableRow>
+			        <com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/orientation_test"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:textSize="16sp"
+			            android:src="@drawable/orientation"
+			            android:textColor="@color/white"
+			            android:text="@string/orientation_test"></com.clock.pt1.keeptesting.ImageTextButton>
+					<com.clock.pt1.keeptesting.ImageTextButton android:id="@+id/monkey_test"
+			            android:layout_width="0px"
+			            android:layout_weight="1"
+			            android:layout_height="128sp"
+			            android:textSize="16sp"
+			            android:src="@drawable/monkey"
+			            android:textColor="@color/white"
+			            android:text="@string/monkey_test"></com.clock.pt1.keeptesting.ImageTextButton>
+			    </TableRow>   		        
+			</TableLayout>
+			
+		</ScrollView>
+	</LinearLayout>
+</RelativeLayout>

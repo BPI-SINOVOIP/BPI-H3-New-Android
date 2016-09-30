@@ -1,0 +1,202 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip" >
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+	
+	        <TextView
+	            android:id="@+id/test_size"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:text="@string/test_size"
+	            android:textSize="25sp" />
+	
+	        <Spinner
+	            android:id="@+id/spinner_size"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignRight="@id/test_size"
+	            android:layout_marginRight="20dp"
+	            android:textSize="25sp"
+	            android:drawSelectorOnTop="true" />
+	    </RelativeLayout>
+	
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+	
+	        <TextView
+	            android:id="@+id/test_times"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:text="@string/test_times"
+	            android:textSize="25sp" />
+	
+	        <Spinner
+	            android:id="@+id/spinner_times"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignRight="@id/test_times"
+	            android:layout_marginRight="20dp"
+	            android:textSize="25sp"
+	            android:drawSelectorOnTop="true" />
+	    </RelativeLayout>
+	
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+	
+	        <TextView
+	            android:id="@+id/test_path"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:text="@string/test_path"
+	            android:textSize="25sp" />
+	
+	        <Spinner
+	            android:id="@+id/edit_path"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignRight="@id/test_path"
+	            android:layout_marginRight="20dp"
+	            android:drawSelectorOnTop="true" 
+	            android:textSize="25sp" />
+	    </RelativeLayout>
+	
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+	
+	        <TextView
+	            android:id="@+id/test_round_text"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:text="@string/storage_test_test_round_text"
+	            android:textSize="25sp" />
+	
+			<EditText
+                android:id="@+id/test_round_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/test_round_text"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:textSize="25sp"
+                android:text="@string/storage_test_test_round_count" />
+	    </RelativeLayout>
+	    
+        <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="horizontal" >
+		    <Button
+		        android:id="@+id/start"
+	            android:layout_width="0dip"
+	            android:layout_height="fill_parent"
+				android:layout_weight="1"
+		        android:text="@string/test_start" >
+		        <requestFocus />
+		    </Button>
+		    <Button
+		        android:id="@+id/clear_dir"
+	            android:layout_width="0dip"
+	            android:layout_height="fill_parent"
+				android:layout_weight="1"
+		        android:text="@string/test_clear_dir" />
+	    </LinearLayout>
+	    
+        <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="horizontal" >
+		    <Button
+		        android:id="@+id/only_read"
+	            android:layout_width="0dip"
+	            android:layout_weight="1"
+	            android:layout_height="fill_parent"
+		        android:text="@string/test_only_read" />
+		
+		    <Button
+		        android:id="@+id/only_write"
+	            android:layout_width="0dip"
+	            android:layout_height="fill_parent"
+				android:layout_weight="1"
+		        android:text="@string/test_only_write" />
+		</LinearLayout>
+	
+	    <View
+	        android:id="@+id/diviser"
+	        android:layout_width="match_parent"
+	        android:layout_height="2dp"
+	        android:layout_centerVertical="true"
+	        android:background="#00DBDB" 
+	        android:padding="10dip" />
+	
+	    <LinearLayout
+	        android:id="@+id/progress_area"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/diviser"
+	        android:orientation="vertical" >
+	
+	        <ProgressBar
+	            android:id="@+id/write_progress"
+	            style="?android:attr/progressBarStyleHorizontal"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="20dp"
+	            android:paddingTop="20dp" />
+	
+	        <TextView
+	            android:id="@+id/write_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="15sp" />
+	
+	        <ProgressBar
+	            android:id="@+id/read_progress"
+	            style="?android:attr/progressBarStyleHorizontal"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="20dp" />
+	
+	        <TextView
+	            android:id="@+id/read_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="15sp" />
+	
+	        <TextView
+	            android:id="@+id/result"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="20sp" />
+	    </LinearLayout>
+	</LinearLayout>
+</ScrollView>

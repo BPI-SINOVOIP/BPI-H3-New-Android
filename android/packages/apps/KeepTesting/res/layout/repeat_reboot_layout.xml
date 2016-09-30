@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip" >
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="30dip" >
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/repeat_reboot_total_number_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/total_reboot_count"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/textView7"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="textNoSuggestions"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:textSize="25sp"
+                android:text="@string/repeat_reboot_total_number_count" >
+
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/repeat_reboot_timer_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/countdown_timer"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/textView8"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="textNoSuggestions"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:text="@string/repeat_reboot_timer_count"
+                android:textSize="25sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/reboot_start_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/repeat_reboot_start_button"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/reboot_stop_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/repeat_reboot_stop_btn"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/test_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/linearLayout1"
+        android:layout_marginTop="24dp"
+        android:text="@string/viewshow"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/current_reboot_num_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/test_status_text"
+        android:layout_alignBottom="@id/test_status_text"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@id/test_status_text"
+        android:textSize="30sp"
+        android:textColor="#FF0000"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/remain_reboot_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/test_status_text"
+        android:textSize="30sp"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/remain_reboot_num_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/remain_reboot_text"
+        android:layout_alignBottom="@id/remain_reboot_text"
+        android:layout_toRightOf="@id/remain_reboot_text"
+        android:textSize="30sp"
+        android:textColor="#FF0000"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/count_down_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/remain_reboot_text"
+        android:textSize="30sp"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/count_down_num_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/count_down_text"
+        android:layout_alignBottom="@id/count_down_text"
+        android:layout_toRightOf="@id/count_down_text"
+        android:textSize="30sp"
+        android:textColor="#FF0000"
+        android:text="@string/viewshow" />
+
+</RelativeLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    >
+    
+    <!-- First Tab -->
+    <include layout="@layout/speed_tester"
+        android:id="@+id/speed_tester"/>
+    
+    <!-- Second Tab -->
+    <include layout="@layout/copy_tester"
+        android:id="@+id/copy_tester"/>
+
+    <!-- Third Tab -->
+    <include layout="@layout/result_reporter" 
+        android:id="@+id/result_reporter"/>
+</FrameLayout>

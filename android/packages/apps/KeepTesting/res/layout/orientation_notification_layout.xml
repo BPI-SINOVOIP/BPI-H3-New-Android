@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:weightSum="100" >
+	<ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:gravity="left"
+        android:layout_weight="85"
+        android:src="@drawable/keeptesting_icon">
+    </ImageView>
+    
+    <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="match_parent"
+	    android:gravity="center_vertical"
+	    android:orientation="vertical" 
+	    android:layout_weight="15">
+	    <TextView
+	        android:id="@+id/orientation_test_info"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"/>
+	    <Button
+	        android:id="@+id/stop_service_button"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/orientation_notification_stop" />
+	</LinearLayout>
+</LinearLayout>

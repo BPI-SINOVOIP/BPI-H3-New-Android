@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="white">#FFFFFF</color><!--白色 -->
+<color name="green">#008000</color><!--绿色 -->
+<color name="darkgreen">#003022</color><!--绿色 -->
+<color name="red">#FF0000</color><!--红色 -->
+<color name="darkred">#2c0012</color><!--红色 -->
+<color name="black">#000000</color><!--黑色 -->
+<color name="fragmentbg_old">#001B24</color>
+<color name="fragmentbg">#212329</color>
+<color name="listbg">#FFFFFF</color>
+<color name="listbg_old">#999999</color>
+<color name="titlebg">#333333</color>
+<color name="buttonbg">#1BA1E2</color>
+<color name="success">#5c9e1a</color>
+<color name="fail">#B10804</color>
+<color name="fsheadbg">#a08920</color>
+<color name="driverheadbg">#778299</color>
+<drawable name="headbg">#B10804</drawable>
+<drawable name="buttonsrc">#1BA1E2</drawable>
+</resources>

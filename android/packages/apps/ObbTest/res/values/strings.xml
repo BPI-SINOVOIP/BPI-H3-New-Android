@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ObbTest</string>
+    <string name="obb_path">obb path</string>
+    <string name="test_obb">/sdcard/test.obb</string>
+    <string name="mount_path">mount path</string>
+    <string name="status">status</string>
+    <string name="mount">mount</string>
+    <string name="unmount">unmount</string>
+</resources>

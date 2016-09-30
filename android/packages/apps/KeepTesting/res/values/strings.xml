@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- main activity -->
+    <string name="app_name">KeepTesting2.5</string>
+    <string name="about">关于</string>
+    <string name="sleep_wakeup">待机唤醒</string>
+    <string name="repeat_reboot">循环重启</string>
+    <string name="repeat_ota">循环OTA升级</string>
+    <string name="ddr_test">DDR测试</string>
+    <string name="fqrouter">翻墙</string>
+    <string name="storage_test">存储测试</string>
+    <string name="orientation_test">旋屏测试</string>
+    <string name="monkey_test">Monkey测试</string>
+    <string name="battery_controller">电量控制</string>
+    <string name="device_not_rooted">设备还没有获得root权限</string>
+    <string name="attention">注意</string>
+    <string name="viewshow"></string>
+    <string name="Yes">是</string>
+    <string name="No">否</string>
+    <string name="DialogTitle">确认</string>
+    <string name="DialogMessage">您确定停止当前测试吗？</string>
+    <string name="ExitMessage">您确定退出吗？</string>
+    <string name="charger_needed">. 样机没有连接充电器，请先插入充电器后再开始测试</string>
+    <string name="wrong_system_time">. 系统时间不正确，请先设置为当前时间</string>
+    <string name="info_box_title">测试前提</string>
+    <string name="confirm">确定</string>
+    <string name="skip">就是要测</string>
+    <string name="exit">好吧，我去改</string>
+    <string name="not_rooted">亲，你的设备还没ROOT哦</string>
+    <string name="about_info">集成测试包 Keeptesting\n\n版本:v2.5\n作者:梁立平/吴晓霞\n邮箱:\n\tliangliping@allwinnertech.com\n\twuxiaoxia@allwinnertech.com\n更新日志:\n\t1.修复Android5.1上休眠唤醒问题\n版权所有:全志 PT1</string>
+
+    <!-- sleep and wake up activity -->
+    <string name="sleep_wakeup_count_text">循环次数</string>
+	<string name="sleep_wakeup_sleep_count">10000</string>
+	<string name="sleep_wakeup_sleep_interval_text">休眠（黑屏）时间</string>
+	<string name="sleep_wakeup_sleep_interval_count">10</string>
+	<string name="sleep_wakeup_wakeup_interval_text">唤醒（亮屏）时间</string>
+	<string name="sleep_wakeup_wakeup_interval_count">9</string>
+	<string name="sleep_wakeup_start_text">开始</string>
+	<string name="sleep_wakeup_stop_text">停止</string>
+	<string name="sleep_wakeup_pause_text">暂停</string>
+	<string name="sleep_wakeup_continue_text">继续</string>
+	<string name="sleep_wakeup_test_finish_text">测试已停止</string>
+	<string name="sleep_wakeup_wait_stop_text">请等待停止！</string>
+	<string name="sleep_wakeup_test_start_text">已开始测试</string>
+	<string name="sleep_wakeup_already_test_text">已完成次数/总数： </string>
+	<string name="sleep_wakeup_second_left_text">秒后进入休眠 </string>
+	<string name="sleep_wakeup_start_delay_text">延迟启动时间</string>
+	<string name="sleep_wakeup_start_delay_count">0</string>
+	<string name="sleep_wakeup_run_in_background_text">后台执行</string>
+	<string name="sleep_wakeup_notification_stop">点我就不睡觉啦啦啦啦~</string>
+	<string name="sleep_wakeup_test_info">当前测试次数：</string>
+	
+	<!-- repeat reboot activity -->
+	<string name="repeat_reboot_current_count_text">当前重启次数：</string>
+    <string name="repeat_reboot_remain_count_text">剩余重启次数：</string>
+    <string name="repeat_reboot_second_left_text">离重启剩余秒数：</string>       
+    <string name="repeat_reboot_test_done_text">测试成功,次数为：</string> 
+	<string name="repeat_reboot_total_number_text">设置重启次数</string>
+    <string name="repeat_reboot_timer_text">设置重启时间</string>
+    <string name="repeat_reboot_start_button">开始</string>
+	<string name="repeat_reboot_total_number_count">10000</string>
+    <string name="repeat_reboot_timer_count">10</string>
+	<string name="repeat_reboot_pause_button">暂停</string>
+    <string name="repeat_reboot_continue_btn">继续</string>
+    <string name="repeat_reboot_stop_btn">停止</string>
+    
+    <!-- repeat OTA activity -->
+	<string name="repeat_OTA_total_test_text">OTA升级设置次数</string>
+	<string name="repeat_OTA_total_test_count">1000</string>
+	<string name="repeat_OTA_idle_text">OTA升级后等待时间</string>
+	<string name="repeat_OTA_Idle_time">10</string>
+	<string name="repeat_OTA_start_button">开始</string>
+	<string name="repeat_OTA_stop_button">停止</string>
+	<string name="repeat_OTA_remain_text">当前OTA升级次数：</string>
+	<string name="repeat_OTA_countdown_text">离OTA升级剩余秒数：</string>
+	<string name="repeat_OTA_finish_message">测试成功,次数为：</string>
+	<string name="repeat_OTA_status">OTA升级进度：</string>
+	<string name="repeat_OTA_verify_progress">正在校验OTA包：</string>
+	<string name="repeat_OTA_verify_finish">完成OTA包校验</string>
+	<string name="repeat_OTA_verify_fail">OTA包校验失败</string>
+	<string name="repeat_OTA_copy_progress">正在拷贝OTA包：</string>
+	<string name="repeat_OTA_copy_finish">完成OTA包拷贝</string>
+	<string name="repeat_OTA_copy_fail">OTA包拷贝失败</string>
+	<string name="repeat_OTA_fail">OTA升级失败，检查日志/cache/last_log</string>
+	<string name="repeat_OTA_error">错误</string>
+	<string name="repeat_OTA_no_update_file">请在测试前将OTA包重命名为update.zip放置于/data/目录下并修改其权限为可读:chmod 777 update.zip</string>
+	
+	<!-- DDR test activity -->
+	<string name="ddr_test_mem_size_text">测试内存大小(MB)： </string>
+	<string name="ddr_test_mem_size_count">64</string>
+    <string name="ddr_test_repeat_text">循环次数：  </string>
+    <string name="ddr_test_repeat_count">1000</string>
+	<string name="ddr_test_start_button">开始</string>
+    <string name="ddr_test_stop_button">停止</string>
+    <string name="ddr_test_no_test_running_text">暂无测试进行</string>
+    <string name="ddr_test_mem_size_error_text">内存大小不能小于1</string>
+    <string name="ddr_test_repeat_count_error_text">测试次数不能少于1</string>
+    <string name="ddr_test_stopped_text">测试已停止</string>
+    <string name="ddr_test_testing_text">正在测试：</string>
+    <string name="ddr_test_root_error_text">设备未获得Root权限，不能开始测试！</string>
+    <string name="ddr_test_success_text">测试完成！</string>
+    <string name="ddr_test_fail_text">测试失败！</string>
+    
+    <!-- Storage test activity -->
+    <string name="storage_test_read_write_text">读写测试</string>
+    <string name="storage_test_file_copy_text">拷贝测试</string>
+    <string name="storage_test_ios_text">ISO测试</string>
+    <string name="storage_test_result_text">测试结果</string>
+    <string name="storage_test_exit_message">请连续点击两次退出应用程序</string>
+    <string name="storage_test_clean_folder_message">请连续点击两次退出应用程序</string>
+    <string name="storage_test_reading_file_message">正在读取文件...</string>
+    <string name="storage_test_delete_success">删除成功</string>
+    <string name="storage_test_delete_fail">删除失败</string>
+    <string name="storage_test_result_ouput">结果输出</string>
+    <string name="storage_test_test_round_text">测试次数(最大500)</string>
+    <string name="storage_test_test_round_count">1</string>
+    <string name="storage_test_go_to_test_result">具体结果请见测试结果页</string>
+    <string name="title_activity_main">存储设备测试v0.2</string>
+    <string name="test_only_write">只写</string>
+    <string name="test_only_read">只读</string>
+    <string name="test_reboot">重启</string>
+    <string name="test_clear_dir">清空测试目录</string>
+    <string name="test_path">测试路径</string>
+    <string name="test_size">单个文件大小</string>
+    <string name="test_times">文件个数</string>
+    <string name="test_start">读写测试</string>
+    <string name="test_copy_start">开始测试</string>
+    <string name="result_format_str">测试结束!\n%1$s 测试结果:\n写入速度为:%2$s\n读取速度为:%3$s</string>
+    <string name="test_copy_to_str">TO</string>
+    <string name="test_copy_unexist">错误</string>
+    <string name="test_copy_fragment">碎片拷贝</string>
+    <string name="test_copy_fragment_total">碎片总量</string>
+    <string name="test_copy_fragment_per_size">单个大小</string>
+    <string name="test_copy_result_format">测试结果:\n总共拷贝 %1$s 个文件\n每个文件大小为: %2$s\n总共耗时: %3$s\n平均每个文件耗时: %4$s\n平均拷贝速度: %5$s</string>
+    <string name="test_copy_progress_create_file">正在创建文件...</string>
+    <string name="test_copy_progress_copy_file">正在拷贝文件...</string>
+    <string name="test_copy_normal">正常拷贝</string>
+    <string name="test_copy_all">自动测试所有设备</string>
+    <string name="test_iso_mount">Mount一个ISO文件</string>
+    <string name="test_iso_select_file">从ISO中选择一个文件</string>
+    <string name="test_iso_start">测试读取速度</string>
+    <string name="test_iso_test_dual">同时读取两个文件</string>
+    <string name="test_iso_dua_select_file">从ISO中选择一个文件</string>
+    <string name="test_iso_dua_select_othe_file">从ISO中选择另一个文件</string>
+    <string name="test_dual_start">测试读取速度</string>
+    <string name="test_iso_set_percent">设置百分比</string>
+    
+    <!-- Orientation Test Activity -->
+    <string name="orientation_random">随机</string>
+    <string name="orientation_clockwise">顺时针</string>
+    <string name="orientation_counterclockwise">逆时针</string>
+    <string name="orientation_num_of_degrees_text">设置旋转度数：</string>
+    <string name="TxtNumDegrees">90</string>
+    <string name="orientation_direction_text">选择旋转方向：</string>
+
+    <string-array name="DirectionName">
+        <item>顺时针</item>
+        <item>逆时针</item>
+    </string-array>
+    <string-array name="NumDegree">
+        <item>随机</item>
+        <item>180</item>
+        <item>90</item>
+    </string-array>
+
+    <string name="orientation_period_text">设置时间间隔：</string>
+    <string name="orientation_period_default_count">3</string>
+    <string name="orientation_test_count_text">设置旋转次数：</string>
+    <string name="orientation_test_count_default_count">2500</string>
+    <string name="orientation_start">开始测试</string>
+    <string name="orientation_stop">暂停测试</string>
+    <string name="orientation_test_info">当前旋转次数：</string>
+    <string name="orientation_notification_stop">点我就不转啦啦啦啦~</string>
+    <string name="orientation_log_count_text">旋转次数:</string>
+
+    <!-- Monkey Test Activity -->
+    <string name="monkey_test_duration_text">测试时长(小时):</string>
+    <string name="monkey_test_duration_count">12</string>
+    <string name="monkey_test_start_button">开始</string>
+    <string name="monkey_test_basic_config_text">基本设置</string>
+    <string name="monkey_test_full_config_text">完整设置</string>
+    <string name="monkey_test_white_list_text">白名单</string>
+    <string name="monkey_test_black_list_text">黑名单</string>
+    <string name="monkey_test_operation_delay_text">操作延时(毫秒):</string>
+    <string name="monkey_test_operation_delay_count">500</string>
+    <string name="monkey_test_debug_level_text">调试信息等级:</string>
+    <string name="monkey_test_ignore_crash_text">忽略应用崩溃</string>
+    <string name="monkey_test_reset_configuration_text">恢复默认值</string>
+    <string name="monkey_test_plus">+</string>
+    <string name="monkey_test_minus">-</string>
+    <string name="monkey_test_empty_white_list_error">选择白名单测试时，白名单不能为空</string>
+    <string name="title_activity_battery_controller">BatteryControllerActivity</string>
+    
+    <!-- Battery Controller Activity -->
+	<string name="battery_controller_lower_bound_default">8</string>
+	<string name="battery_controller_upper_bound_default">10</string>
+	<string name="battery_controller_between_text">&lt;=  电量  &lt;=</string>
+	<string name="battery_controller_percentage">%</string>
+	<string name="battery_controller_setting_text">设置电量范围：</string>
+	<string name="battery_controller_input_error">电量下限/上限非法输入，上限需大于等于下限</string>
+	<string name="battery_controller_start">开始</string>
+	<string name="battery_controller_stop">停止</string>
+	<string name="battery_controller_reach_upper_bound_with_charger">达到电量控制上限，请拔掉充电器</string>
+	<string name="battery_controller_reach_lower_bound_without_charger">达到电量控制下限，请插上充电器</string>
+	<string name="battery_controller_battery_level">电量：</string>
+	<string name="battery_controller_charger">充电器：</string>
+	<string name="battery_controller_no">无</string>
+	<string name="battery_controller_charger_plugin">充电器插入</string>
+	<string name="battery_controller_charger_plugout">充电器拔出</string>
+</resources>

@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/wipedata_linearlayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip" >
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="30dip" >
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+       </RelativeLayout>
+
+        <Button
+            android:id="@+id/wipedata_start_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/repeat_reboot_start_button"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/wipedata_stop_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/repeat_reboot_stop_btn"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/test_status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/wipedata_linearlayout1"
+        android:layout_marginTop="24dp"
+        android:text="@string/viewshow"
+        android:textSize="30sp" />
+
+    <TextView
+        android:id="@+id/current_wipedata_num_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/test_status_text"
+        android:layout_alignBottom="@id/test_status_text"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@id/test_status_text"
+        android:textSize="30sp"
+        android:textColor="#FF0000"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/count_down_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/remain_reboot_text"
+        android:textSize="30sp"
+        android:text="@string/viewshow" />
+
+    <TextView
+        android:id="@+id/count_down_num_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/count_down_text"
+        android:layout_alignBottom="@id/count_down_text"
+        android:layout_toRightOf="@id/count_down_text"
+        android:textSize="30sp"
+        android:textColor="#FF0000"
+        android:text="@string/viewshow" />
+
+</RelativeLayout>

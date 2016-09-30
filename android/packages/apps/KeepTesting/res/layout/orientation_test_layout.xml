@@ -1,0 +1,132 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip" >
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/orientation_num_of_degrees_text"
+                android:textSize="25sp" />
+
+            <Spinner
+                android:id="@+id/orientation_num_of_degree_spinner"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="180dp"
+                android:gravity="center"
+                android:maxLength="32"
+                android:textSize="30sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/orientation_direction_text"
+                android:textSize="25sp" />
+
+            <Spinner
+                android:id="@+id/orientation_direction_spinner"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="180dp"
+                android:gravity="center"
+                android:maxLength="32"
+                android:textSize="30sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/orientation_period_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/orientation_period_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="180dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:text="@string/orientation_period_default_count"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/orientation_test_count_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/orientation_test_count_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="180dp"
+                android:gravity="center"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:text="@string/orientation_test_count_default_count"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/orientation_start_button"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="@string/orientation_start" />
+
+            <Button
+                android:id="@+id/orientation_stop_button"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="@string/orientation_stop" />
+        </LinearLayout>
+
+    </LinearLayout>
+  </RelativeLayout>

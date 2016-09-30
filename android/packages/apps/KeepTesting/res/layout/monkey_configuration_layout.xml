@@ -1,0 +1,212 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+     <LinearLayout
+         android:id="@+id/linearLayout1"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="vertical"
+         android:padding="8dip" >
+
+         <LinearLayout
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:padding="8dip"
+             android:orientation="horizontal" >
+
+             <CheckBox
+                 android:id="@+id/basic_config_check_box"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:checked="true"
+                 android:text="@string/monkey_test_basic_config_text" />
+
+             <CheckBox
+                 android:id="@+id/full_config_check_box"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_weight="1"
+                 android:checked="false"
+                 android:text="@string/monkey_test_full_config_text" />
+         </LinearLayout>
+         <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="8dip" >
+
+            <CheckBox
+                android:id="@+id/white_list_check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                android:text="@string/monkey_test_white_list_text" />
+
+            <Button
+                android:id="@+id/monkey_test_white_list_minus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="25dp"
+                android:text="@string/monkey_test_minus"
+                android:textSize="25sp" />
+			<Button
+                android:id="@+id/monkey_test_white_list_plus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+				android:textSize="25sp"
+				android:layout_toLeftOf="@id/monkey_test_white_list_minus_button"
+                android:text="@string/monkey_test_plus" />
+         </RelativeLayout>
+
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="8dip" >
+
+             <CheckBox
+                 android:id="@+id/black_list_check_box"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:checked="true"
+                 android:text="@string/monkey_test_black_list_text" />
+            <Button
+                android:id="@+id/monkey_test_black_list_minus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="25dp"
+                android:text="@string/monkey_test_minus"
+                android:textSize="25sp" />
+			<Button
+                android:id="@+id/monkey_test_black_list_plus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+				android:textSize="25sp"
+				android:layout_toLeftOf="@id/monkey_test_black_list_minus_button"
+                android:text="@string/monkey_test_plus" />             
+        </RelativeLayout>
+        
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="8dip" >
+
+            <TextView
+                android:id="@+id/monkey_test_duration_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/monkey_test_duration_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/monkey_test_duration_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/monkey_test_duration_text"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:textSize="25sp"
+                android:text="@string/monkey_test_duration_count" >
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>
+        
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="8dip" >
+
+            <TextView
+                android:id="@+id/monkey_test_operation_delay_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dip"
+                android:text="@string/monkey_test_operation_delay_text"
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/monkey_test_operation_delay_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/monkey_test_operation_delay_text"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:textSize="25sp"
+                android:text="@string/monkey_test_operation_delay_count" >
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>    
+            
+		
+		<LinearLayout
+			 android:id="@+id/full_options"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical" >
+			<RelativeLayout
+		        android:layout_width="fill_parent"
+		    	android:layout_height="wrap_content"
+		    	android:padding="8dip" >
+		        <TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center"
+		            android:text="@string/monkey_test_debug_level_text"
+		            android:textSize="25sp" />
+	
+		        <Spinner
+		            android:id="@+id/debug_level_spinner"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentRight="true"
+		            android:layout_marginRight="25dp"
+		            android:drawSelectorOnTop="true" />
+		    </RelativeLayout>
+			<RelativeLayout
+		        android:layout_width="fill_parent"
+		    	android:layout_height="wrap_content"
+		    	android:padding="8dip" >
+				<CheckBox
+                 android:id="@+id/monkey_test_ignore_crash_check_box"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:checked="false"
+                 android:text="@string/monkey_test_ignore_crash_text" />
+		    </RelativeLayout>
+		</LinearLayout>
+
+        <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	        <Button
+	            android:id="@+id/monkey_test_start_button"
+		        android:layout_width="0dip"
+	            android:layout_height="fill_parent"
+	            android:layout_weight="1"
+	            android:text="@string/monkey_test_start_button" />
+	        <Button
+	            android:id="@+id/monkey_test_reset_configuration_button"
+	            android:layout_width="0dip"
+	            android:layout_height="fill_parent"
+	            android:layout_weight="1"
+	            android:text="@string/monkey_test_reset_configuration_text" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

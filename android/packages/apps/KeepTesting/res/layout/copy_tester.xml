@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:id="@+id/source_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip" >
+	    <RelativeLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="0"
+	    	android:padding="10dip" >
+	        <Spinner
+	            android:id="@+id/spinner_from"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:drawSelectorOnTop="true" />
+	
+	        <TextView
+	            android:id="@+id/to_string"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="30dp"
+	            android:paddingRight="30dp"
+	            android:textSize="25sp"
+	            android:text="@string/test_copy_to_str"
+	            android:layout_toRightOf="@id/spinner_from"/>
+	
+	        <Spinner
+	            android:id="@+id/spinner_to"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:drawSelectorOnTop="true" 
+	            android:layout_toRightOf="@id/to_string"/>
+	
+	        <CheckBox
+	            android:id="@+id/copy_all"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/test_copy_all"
+	            android:layout_alignParentRight="true"
+	            android:textSize="25sp"
+	            android:layout_marginRight="25dp" />
+		</RelativeLayout>
+    
+
+	    <RadioGroup
+	        android:id="@+id/copy_mode_select"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" >
+	
+	        <RadioButton
+	            android:id="@+id/copy_normal"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/test_copy_normal"
+	            android:textSize="25sp" />
+	
+	        <RadioButton
+	            android:id="@+id/copy_fragment"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/test_copy_fragment" 
+	            android:textSize="25sp"/>
+	    </RadioGroup>
+	
+	    <LinearLayout
+	        android:id="@+id/normal_area"
+	        android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:orientation="vertical">
+		    <RelativeLayout
+		        android:layout_width="fill_parent"
+		    	android:layout_height="wrap_content"
+		    	android:layout_weight="0"
+		    	android:padding="10dip" >
+		        <TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center"
+		            android:text="@string/test_size"
+		            android:textSize="25sp" />
+	
+		        <Spinner
+		            android:id="@+id/spinner_normal_size"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentRight="true"
+		            android:layout_marginRight="25dp"
+		            android:drawSelectorOnTop="true" />
+		    </RelativeLayout>
+
+		    <RelativeLayout
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="0"
+		        android:padding="10dip" >
+	
+		        <TextView
+		            android:id="@+id/test_times"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center"
+		            android:text="@string/test_times"
+		            android:textSize="25sp" />
+	
+		        <Spinner
+		            android:id="@+id/spinner_normal_times"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentRight="true"
+		            android:layout_marginRight="25dp"
+		            android:drawSelectorOnTop="true" />
+		    </RelativeLayout>
+	    </LinearLayout>
+		<LinearLayout
+		    android:id="@+id/fragment_area"
+	        android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:orientation="vertical">
+		    <RelativeLayout
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:padding="10dip" >
+		        <TextView
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_gravity="center"
+		            android:text="@string/test_copy_fragment_total"
+		            android:textSize="25sp" />
+	
+		        <Spinner
+		            android:id="@+id/spinner_fragment_total"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentRight="true"
+		            android:layout_marginRight="20dp"	            
+		            android:drawSelectorOnTop="true" />
+		    </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/times_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dip">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/test_copy_fragment_per_size"
+                    android:textSize="25sp" />
+
+                <Spinner
+                    android:id="@+id/spinner_fragment_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawSelectorOnTop="true" 
+                    android:layout_alignParentRight="true"
+		            android:layout_marginRight="20dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+        
+		<RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:padding="10dip" >
+	
+	        <TextView
+	            android:id="@+id/copy_test_round_text"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_gravity="center"
+	            android:text="@string/storage_test_test_round_text"
+	            android:textSize="25sp" />
+	
+			<EditText
+                android:id="@+id/copy_test_round_edit"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_alignRight="@id/copy_test_round_text"
+                android:layout_marginRight="20dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:textSize="25sp"
+                android:text="@string/storage_test_test_round_count" />
+	    </RelativeLayout>
+	    
+	    <Button
+	        android:id="@+id/start"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/test_copy_start" />
+        <View
+            android:id="@+id/diviser"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#00DBDB" 
+            android:padding="10dip"/>
+	    
+	    <LinearLayout
+	        android:id="@+id/progress_area"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	
+	        <ProgressBar
+	            android:id="@+id/write_progress"
+	            style="?android:attr/progressBarStyleHorizontal"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="20dp"
+	            android:paddingTop="20dp" />
+	
+	        <TextView
+	            android:id="@+id/write_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="15sp" />
+	
+	        <ProgressBar
+	            android:id="@+id/read_progress"
+	            style="?android:attr/progressBarStyleHorizontal"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:paddingLeft="20dp"
+	            android:paddingRight="20dp" />
+	
+	        <TextView
+	            android:id="@+id/read_text"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="15sp" />
+	
+	        <TextView
+	            android:id="@+id/result"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="20sp" />
+	    
+	    </LinearLayout>
+	</LinearLayout>
+</ScrollView>

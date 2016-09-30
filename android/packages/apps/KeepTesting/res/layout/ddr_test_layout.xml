@@ -1,0 +1,123 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white" 
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/topbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dip"
+        >
+		<RelativeLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="0"
+	    	android:padding="10dip" >
+	        <TextView
+	            android:id="@+id/mem_size_text"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dip"
+	            android:textSize="25sp"
+	            android:text="@string/ddr_test_mem_size_text"
+	            />
+	        <EditText
+                android:id="@+id/mem_size_edit"
+                android:layout_alignRight="@id/mem_size_text"
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_marginRight="25dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:text="@string/ddr_test_mem_size_count"
+                android:textSize="25sp" />
+        </RelativeLayout>
+		<RelativeLayout
+	    	android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:layout_weight="0"
+	    	android:padding="10dip" >
+	        <TextView
+	            android:id="@+id/repeat_text"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="8dip"
+	            android:textSize="25sp"
+	            android:text="@string/ddr_test_repeat_text"
+	            />
+	        
+	        <EditText
+	            android:id="@+id/repeat_edit"
+                android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+                android:layout_alignRight="@id/repeat_text"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="25dp"
+                android:ems="10"
+                android:inputType="number"
+                android:maxLength="32"
+                android:singleLine="true"
+                android:text="@string/ddr_test_repeat_count"
+                android:textSize="25sp" />
+		</RelativeLayout>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		android:orientation="horizontal" >
+        <Button
+            android:id="@+id/ddr_start_button"
+			android:layout_width="0dip"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+            android:text="@string/ddr_test_start_button"
+            android:textSize="25sp" />
+
+        <Button
+            android:id="@+id/ddr_stop_button"
+			android:layout_width="0dip"
+			android:layout_height="fill_parent"
+			android:layout_weight="1"
+            android:text="@string/ddr_test_stop_button"
+            android:textSize="25sp" />
+
+	    </LinearLayout>
+    <TextView
+        android:id="@+id/testing_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dip"
+        android:maxLines="1"
+        android:textColor="#FF0000"
+        android:textSize="25sp"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_marginTop="8dip"
+        android:background="@android:color/black"
+        />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1" 
+        android:layout_marginTop="8dip"
+        >
+
+        <TextView
+            android:id="@+id/output_window"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:textColor="@android:color/black" />
+    </ScrollView>
+
+</LinearLayout>
