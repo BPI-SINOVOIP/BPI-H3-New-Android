@@ -1,0 +1,6 @@
+#init cmcc data befor boot complete
+service cmccwasu /system/bin/cmccwasu_systemservice
+    class main
+    user root
+    group root
+    oneshot

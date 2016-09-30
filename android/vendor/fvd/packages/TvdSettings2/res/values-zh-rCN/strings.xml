@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="allow_notify">显示通知</string>
+	<string name="storage">存储</string>
+	<string name="total">总共</string>
+	<string name="application">应用</string>
+	<string name="cache_storage">缓存</string>
+	<string name="sdcard_storage">SD卡存储</string>
+	<string name="data_storage">数据</string>
+</resources>
