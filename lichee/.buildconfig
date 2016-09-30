@@ -1,0 +1,5 @@
+export LICHEE_CHIP=sun8iw7p1
+export LICHEE_PLATFORM=android
+export LICHEE_BUSINESS=dolphin
+export LICHEE_KERN_VER=linux-3.4
+export LICHEE_BOARD=
