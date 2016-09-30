@@ -1,0 +1,225 @@
+From aca5b76f49efc35145d5bc41cdd8a20a658ab866 Mon Sep 17 00:00:00 2001
+From: zhangjh <zhangjh@allwinnertech.com>
+Date: Fri, 25 Mar 2016 19:12:01 +0800
+Subject: [PATCH] wifi: add support xr819
+
+related repo:
+    external/wpa_supplicant_8
+    hardware/broadcom/wlan
+    hardware/libhardware_legacy
+---
+ hostapd/config_file.c           |    2 ++
+ src/ap/beacon.c                 |    2 ++
+ src/drivers/driver_nl80211.c    |    6 +++++-
+ src/p2p/p2p.c                   |   28 ++++++++++++++++++++--------
+ src/p2p/p2p_go_neg.c            |    7 ++++++-
+ wpa_supplicant/ctrl_iface.c     |    4 ++++
+ wpa_supplicant/p2p_supplicant.c |   30 +++++++++++++++++++++++++-----
+ 7 files changed, 64 insertions(+), 15 deletions(-)
+ mode change 100644 => 100755 hostapd/config_file.c
+ mode change 100644 => 100755 src/ap/beacon.c
+
+diff --git a/hostapd/config_file.c b/hostapd/config_file.c
+old mode 100644
+new mode 100755
+index 5326f41..249c8c7
+--- a/hostapd/config_file.c
++++ b/hostapd/config_file.c
+@@ -3112,6 +3112,8 @@ struct hostapd_config * hostapd_config_read(const char *fname)
+ 		*pos = '\0';
+ 		pos++;
+ 		errors += hostapd_config_fill(conf, bss, buf, pos, line);
++		if (strcmp(get_wifi_vendor_name(), "xradio") == 0)
++			bss->wmm_uapsd = 1;
+ 	}
+ 
+ 	fclose(f);
+diff --git a/src/ap/beacon.c b/src/ap/beacon.c
+old mode 100644
+new mode 100755
+index 2f4ba23..5e6adc3
+--- a/src/ap/beacon.c
++++ b/src/ap/beacon.c
+@@ -282,6 +282,8 @@ static u8 * hostapd_gen_probe_resp(struct hostapd_data *hapd,
+ #endif /* CONFIG_WPS */
+ 
+ #ifdef CONFIG_P2P
++	if (strcmp(get_wifi_vendor_name(), "xradio") == 0)
++		is_p2p = 1;
+ 	if ((hapd->conf->p2p & P2P_ENABLED) && is_p2p &&
+ 	    hapd->p2p_probe_resp_ie) {
+ 		os_memcpy(pos, wpabuf_head(hapd->p2p_probe_resp_ie),
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index d02d497..0a5a909 100755
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -7405,13 +7405,17 @@ static int wpa_driver_nl80211_hapd_send_eapol(
+ 	u8 *pos;
+ 	int res;
+ 	int qos = flags & WPA_STA_WMM;
++	if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		if (drv->device_ap_sme || !drv->use_monitor)
++			return nl80211_send_eapol_data(bss, addr, data, data_len);
++	} else {
+ #ifndef ANDROID_P2P
+ 	if (drv->device_ap_sme || !drv->use_monitor)
+ #else
+ 	if (drv->device_ap_sme && !drv->use_monitor)
+ #endif
+ 		return nl80211_send_eapol_data(bss, addr, data, data_len);
+-
++	}
+ 	len = sizeof(*hdr) + (qos ? 2 : 0) + sizeof(rfc1042_header) + 2 +
+ 		data_len;
+ 	hdr = os_zalloc(len);
+diff --git a/src/p2p/p2p.c b/src/p2p/p2p.c
+index 028ca1b..a29d0e9 100755
+--- a/src/p2p/p2p.c
++++ b/src/p2p/p2p.c
+@@ -118,11 +118,13 @@ static void p2p_expire_peers(struct p2p_data *p2p)
+ 			continue;
+ #endif
+ 
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+ 			if (dev->req_config_methods != 0)
+ 				continue;
+-		}
+-		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			if (dev->req_config_methods != 0)
++				continue;
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
+ 			if (dev->req_config_methods != 0)
+ 				continue;
+ 		}
+@@ -747,7 +749,7 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 			freq, msg.ds_params ? *msg.ds_params : -1);
+ 	}
+ 	if (scan_res) {
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+ 			if (dev->listen_freq) {
+ 				if (freq == 2412 || freq == 2437 || freq == 2462) {
+ 					dev->listen_freq = freq;
+@@ -759,8 +761,7 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
+ 				dev->listen_freq = freq;
+ 			}
+-		}
+-		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
+ 			if (dev->listen_freq) {
+ 				if (freq == 2412 || freq == 2437 || freq == 2462) {
+ 					dev->listen_freq = freq;
+@@ -772,8 +773,19 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
+ 				dev->listen_freq = freq;
+ 			}
+-		}
+-		else {
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++			if (dev->listen_freq) {
++				if (freq == 2412 || freq == 2437 || freq == 2462) {
++					dev->listen_freq = freq;
++					wpa_printf(MSG_INFO, "%s, listen_freq=%d", __func__, dev->listen_freq);
++				} else {
++					wpa_printf(MSG_INFO, "%s, freq(%d) is not 1,6,11, don't update to listen_freq", __func__, freq);
++				}
++			} else {
++				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
++				dev->listen_freq = freq;
++			}
++		} else {
+ 			dev->listen_freq = freq;
+ 		}
+ 		if (msg.group_info)
+diff --git a/src/p2p/p2p_go_neg.c b/src/p2p/p2p_go_neg.c
+index 942b1cc..59463bf 100755
+--- a/src/p2p/p2p_go_neg.c
++++ b/src/p2p/p2p_go_neg.c
+@@ -607,7 +607,12 @@ void p2p_process_go_neg_req(struct p2p_data *p2p, const u8 *sa,
+ 		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
+ 		p2p_add_dev_info(p2p, sa, dev, &msg);
+ 	}
+-
++	else if (((strcmp(get_wifi_vendor_name(), "xradio") != 0) && (dev->flags & P2P_DEV_PROBE_REQ_ONLY))
++			|| (strcmp(get_wifi_vendor_name(), "xradio") == 0))
++	{
++		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
++		p2p_add_dev_info(p2p, sa, dev, &msg);
++	}
+ 	if (dev && dev->flags & P2P_DEV_USER_REJECTED) {
+ 		p2p_dbg(p2p, "User has rejected this peer");
+ 		status = P2P_SC_FAIL_REJECTED_BY_USER;
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index ba07eb5..0880241 100755
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -3747,6 +3747,10 @@ static int p2p_ctrl_connect(struct wpa_supplicant *wpa_s, char *cmd,
+ 			return -1;
+ 	}
+ 
++	if(strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		go_intent = 14;
++		wpa_printf(MSG_ERROR, "xradio p2p force go_intent=%d", go_intent);
++	}
+ 	if(strcmp(get_wifi_vendor_name(), "broadcom") == 0) {
+ 		/* set it to be GO for better compability with more dongles */
+ 		go_intent = 14;
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index ef7ead5..4f8e214 100755
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -2721,15 +2721,22 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+ 			   " was accepted; op_freq=%d MHz",
+ 			   MAC2STR(sa), op_freq);
+ 
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+-    // clear previous wpa_s->go_params because it is out of data.
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
+ 			if (wpa_s->go_params) {
+ 				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
+ 				os_free(wpa_s->go_params);
+ 				wpa_s->go_params = NULL;
+ 			}
+-		}else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
+-    // clear previous wpa_s->go_params because it is out of data.
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
++			if (wpa_s->go_params) {
++				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
++				os_free(wpa_s->go_params);
++				wpa_s->go_params = NULL;
++			}
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
+ 			if (wpa_s->go_params) {
+ 				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
+ 				os_free(wpa_s->go_params);
+@@ -5474,7 +5481,20 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
+ 				timeout = 0;
+ 			}
+ 		}
+-	} else {
++	} else if(strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		timeout = P2P_MAX_CLIENT_IDLE;
++		if (wpa_s->current_ssid->mode == WPAS_MODE_INFRA) {
++			if (wpa_s->show_group_started) {
++				wpa_printf(MSG_INFO, "P2P: set P2P group idle timeout to 20s "
++				"while waiting for initial 4-way handshake to "
++				"complete");
++				timeout = P2P_MAX_CLIENT_IDLE;
++			} else {
++				timeout = 0;
++			}
++		}
++	}
++	else {
+ 		if (wpa_s->show_group_started) {
+ 			/*
+ 		 	* Use the normal group formation timeout between the end of
+-- 
+1.7.9.5
+

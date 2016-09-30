@@ -1,0 +1,919 @@
+From 0c2ef8c4f1cd1ea968284f13fcb2723e7547c2bb Mon Sep 17 00:00:00 2001
+From: huanglong <huanglong@allwinnertech.com>
+Date: Wed, 3 Aug 2016 14:50:13 +0800
+Subject: [PATCH] Support ESP8089 & XR819
+
+---
+ hostapd/config_file.c            |    2 +
+ src/ap/beacon.c                  |    2 +
+ src/drivers/driver_nl80211.c     |  394 ++++++++++++++++++++++++++++++++++++--
+ src/p2p/p2p.c                    |   28 ++-
+ src/p2p/p2p_go_neg.c             |    7 +-
+ wpa_supplicant/ctrl_iface.c      |    4 +
+ wpa_supplicant/ctrl_iface_unix.c |    8 +-
+ wpa_supplicant/events.c          |    9 +-
+ wpa_supplicant/main.c            |   28 +++
+ wpa_supplicant/p2p_supplicant.c  |   35 +++-
+ wpa_supplicant/sme.c             |   19 ++
+ wpa_supplicant/wpa_supplicant.c  |   14 ++
+ 12 files changed, 515 insertions(+), 35 deletions(-)
+ mode change 100644 => 100755 hostapd/config_file.c
+ mode change 100644 => 100755 src/ap/beacon.c
+ mode change 100644 => 100755 wpa_supplicant/ctrl_iface_unix.c
+ mode change 100644 => 100755 wpa_supplicant/events.c
+ mode change 100644 => 100755 wpa_supplicant/sme.c
+ mode change 100644 => 100755 wpa_supplicant/wpa_supplicant.c
+
+diff --git a/hostapd/config_file.c b/hostapd/config_file.c
+old mode 100644
+new mode 100755
+index 5326f41..249c8c7
+--- a/hostapd/config_file.c
++++ b/hostapd/config_file.c
+@@ -3112,6 +3112,8 @@ struct hostapd_config * hostapd_config_read(const char *fname)
+ 		*pos = '\0';
+ 		pos++;
+ 		errors += hostapd_config_fill(conf, bss, buf, pos, line);
++		if (strcmp(get_wifi_vendor_name(), "xradio") == 0)
++			bss->wmm_uapsd = 1;
+ 	}
+ 
+ 	fclose(f);
+diff --git a/src/ap/beacon.c b/src/ap/beacon.c
+old mode 100644
+new mode 100755
+index 2f4ba23..5e6adc3
+--- a/src/ap/beacon.c
++++ b/src/ap/beacon.c
+@@ -282,6 +282,8 @@ static u8 * hostapd_gen_probe_resp(struct hostapd_data *hapd,
+ #endif /* CONFIG_WPS */
+ 
+ #ifdef CONFIG_P2P
++	if (strcmp(get_wifi_vendor_name(), "xradio") == 0)
++		is_p2p = 1;
+ 	if ((hapd->conf->p2p & P2P_ENABLED) && is_p2p &&
+ 	    hapd->p2p_probe_resp_ie) {
+ 		os_memcpy(pos, wpabuf_head(hapd->p2p_probe_resp_ie),
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 2b148ed..cf79bc4 100755
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -38,6 +38,8 @@
+ #include "rfkill.h"
+ #include "driver.h"
+ #include "wifi.h"
++#include <time.h>
++#include <stdbool.h>
+ 
+ #ifndef SO_WIFI_STATUS
+ # if defined(__sparc__)
+@@ -3219,6 +3221,8 @@ static int wiphy_info_handler(struct nl_msg *msg, void *arg)
+ 	else if(strcmp(get_wifi_vendor_name(), "southsv") == 0 && tb[NL80211_ATTR_DEVICE_AP_SME])
+ #endif
+ 		info->device_ap_sme =1;
++	else if (strcmp(get_wifi_vendor_name(), "eagle") == 0 && tb[NL80211_ATTR_DEVICE_AP_SME])
++		info->device_ap_sme = 1;
+ 
+ 	wiphy_info_feature_flags(info, tb[NL80211_ATTR_FEATURE_FLAGS]);
+ 	wiphy_info_probe_resp_offload(capa,
+@@ -3366,6 +3370,8 @@ static int wpa_driver_nl80211_capa(struct wpa_driver_nl80211_data *drv)
+ 
+ 		if(strcmp(get_wifi_vendor_name(), "southsv") == 0 )
+ 			drv->use_monitor = 1;
++		else if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++			drv->use_monitor = 1;
+ 		else
+ 			drv->use_monitor = 0;
+ 	}
+@@ -4380,22 +4386,24 @@ static int wpa_driver_nl80211_scan(struct i802_bss *bss,
+ 		struct nlattr *rates;
+ 
+ 		wpa_printf(MSG_DEBUG, "nl80211: P2P probe - mask SuppRates");
++		if (strcmp(get_wifi_vendor_name(), "eagle") != 0) {
++			rates = nla_nest_start(msg, NL80211_ATTR_SCAN_SUPP_RATES);
++			if (rates == NULL)
++				goto nla_put_failure;
+ 
+-		rates = nla_nest_start(msg, NL80211_ATTR_SCAN_SUPP_RATES);
+-		if (rates == NULL)
+-			goto nla_put_failure;
+-
+-		/*
+-		 * Remove 2.4 GHz rates 1, 2, 5.5, 11 Mbps from supported rates
+-		 * by masking out everything else apart from the OFDM rates 6,
+-		 * 9, 12, 18, 24, 36, 48, 54 Mbps from non-MCS rates. All 5 GHz
+-		 * rates are left enabled.
+-		 */
+-		NLA_PUT(msg, NL80211_BAND_2GHZ, 8,
+-			"\x0c\x12\x18\x24\x30\x48\x60\x6c");
+-		nla_nest_end(msg, rates);
++			/*
++			 * Remove 2.4 GHz rates 1, 2, 5.5, 11 Mbps from supported rates
++			 * by masking out everything else apart from the OFDM rates 6,
++			 * 9, 12, 18, 24, 36, 48, 54 Mbps from non-MCS rates. All 5 GHz
++			 * rates are left enabled.
++			 */
++			NLA_PUT(msg, NL80211_BAND_2GHZ, 8,
++				"\x0c\x12\x18\x24\x30\x48\x60\x6c");
++			nla_nest_end(msg, rates);
+ 
+-		NLA_PUT_FLAG(msg, NL80211_ATTR_TX_NO_CCK_RATE);
++			NLA_PUT_FLAG(msg, NL80211_ATTR_TX_NO_CCK_RATE);
++		} else
++			nl80211_disable_11b_rates(drv, drv->ifindex, 1);
+ 	}
+ 
+ 	ret = send_and_recv_msgs(drv, msg, NULL, NULL);
+@@ -4900,6 +4908,353 @@ nla_put_failure:
+ 	return NULL;
+ }
+ 
++#define IGNORE_TIME 10
++#define TIME_LIMIT 20
++#define COUNT_LIMIT_LARGE 5
++#define COUNT_LIMIT_SMALL 3
++#define RSSI_ALGORITHM_PARAM 2
++#define RSSI_ALGORITHM_TRIVIAL_FAST_PARAM 4
++#define RSSI_ALGORITHM_TRIVIAL_NORMAL_PARAM 8
++#define RSSI_ALGORITHM_TRIVIAL_SLOW_PARAM 16
++
++int gl_rssi_filter_level = 2;
++u8 gl_var_bssid[ETH_ALEN] = {0};
++u8 gl_var_ssid[64] = {0};
++size_t gl_var_ssid_len = 0;
++
++struct cache_wpa_scan_res {
++	struct wpa_scan_res *res;
++
++	time_t alive_timer;
++	u16 undetected_count;
++
++	time_t max_rssi_timer;
++	u32 appear_count;
++	int max_level;
++};
++
++struct cache_wpa_scan_results {
++	struct cache_wpa_scan_res **res;
++	size_t num;
++};
++
++static struct cache_wpa_scan_results *res_cache = NULL;
++
++static const u8 *wpa_scan_get_ie(const struct wpa_scan_res *res, u8 ie)
++{
++	const u8 *end, *pos;
++
++	pos = (const u8 *) (res + 1);
++	end = pos + res->ie_len;
++
++	while (pos + 1 < end) {
++		if (pos + 2 + pos[1] > end)
++			break;
++		if (pos[0] == ie)
++			return pos;
++		pos += 2 + pos[1];
++	}
++
++	return NULL;
++}
++
++void deep_cpy_res(struct wpa_scan_res *target, struct wpa_scan_res *ori)
++{
++	size_t i;
++
++	u8 *pos_target;
++	u8 *pos_ori;
++
++	target->flags 		= ori->flags;
++
++	os_memcpy(target->bssid, ori->bssid, ETH_ALEN);
++
++	target->freq 		= ori->freq;
++	target->beacon_int 	= ori->beacon_int;
++	target->caps 		= ori->caps;
++	target->qual 		= ori->qual;
++	target->noise		= ori->noise;
++	target->level		= ori->level;
++	target->tsf		= ori->tsf;
++	target->age		= ori->age;
++
++	target->ie_len		= ori->ie_len;
++	target->beacon_ie_len	= ori->beacon_ie_len;
++
++	pos_target = (u8 *)(target + 1);
++	pos_ori = (u8 *)(ori + 1);
++
++	if (target->ie_len != 0) {
++		wpa_printf(MSG_DEBUG, "ie_len is %d", target->ie_len);
++		os_memcpy(pos_target, pos_ori, target->ie_len);
++		pos_target += target->ie_len;
++		pos_ori += target->ie_len;
++	} else
++		wpa_printf(MSG_DEBUG, "ATTENTION: ie is empty");
++
++	if (target->beacon_ie_len != 0) {
++		wpa_printf(MSG_DEBUG, "beacon_ie_len is %d", target->beacon_ie_len);
++		os_memcpy(pos_target, pos_ori, target->beacon_ie_len);
++	} else
++		wpa_printf(MSG_DEBUG, "ATTENTION: beacon_ie is empty");
++}
++
++void update_res_cache(struct wpa_scan_res *res)
++{
++	size_t i;
++	struct cache_wpa_scan_res * c_r;
++	struct cache_wpa_scan_res **tmp;
++	u8 bssid[ETH_ALEN];
++	bool exist = false;
++	const u8 *ssid;
++
++	int level = res->level;
++	int cached_ap_level;
++	int count;
++
++	for (i = 0; i < ETH_ALEN; i++) {
++		bssid[i] = (res->bssid)[i];
++	}
++
++	wpa_printf(MSG_DEBUG, "bssid is " MACSTR, MAC2STR(res->bssid));
++
++	for (i = 0; i < res_cache->num; i++) {
++		/* wpa_printf(MSG_DEBUG, "check %d times", i); */
++		if (res_cache->res[i] && !os_memcmp(bssid, res_cache->res[i]->res->bssid, ETH_ALEN)) {
++			wpa_printf(MSG_DEBUG, "bssid exists");
++			exist = true;
++			res_cache->res[i]->alive_timer = time(NULL);
++
++			cached_ap_level = res_cache->res[i]->res->level;
++
++			os_free(res_cache->res[i]->res);
++
++			size_t ie_len = res->ie_len;
++			size_t beacon_ie_len = res->beacon_ie_len;
++			res_cache->res[i]->res = os_zalloc( sizeof(*( res_cache->res[i]->res )) + ie_len + beacon_ie_len);
++			deep_cpy_res(res_cache->res[i]->res, res);
++
++			wpa_printf(MSG_DEBUG, "gl_rssi_filter_level[%d]", gl_rssi_filter_level);
++			switch (gl_rssi_filter_level) {
++				case 0:
++					/* do nothing */
++					break;
++				case 1:
++					if (level > cached_ap_level)
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_PARAM - 1) + level) / RSSI_ALGORITHM_PARAM;
++					else
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_TRIVIAL_FAST_PARAM - 1) + level) / RSSI_ALGORITHM_TRIVIAL_FAST_PARAM;
++
++					break;
++				case 2:
++					if (level > cached_ap_level)
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_PARAM - 1) + level) / RSSI_ALGORITHM_PARAM;
++					else
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_TRIVIAL_NORMAL_PARAM - 1) + level) / RSSI_ALGORITHM_TRIVIAL_NORMAL_PARAM;
++					break;
++				case 3:
++					if (level > cached_ap_level)
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_PARAM - 1) + level) / RSSI_ALGORITHM_PARAM;
++					else
++						res->level = (cached_ap_level * (RSSI_ALGORITHM_TRIVIAL_SLOW_PARAM - 1) + level) / RSSI_ALGORITHM_TRIVIAL_SLOW_PARAM;
++					break;
++				default:
++					break;
++			}
++
++			res_cache->res[i]->res->level = res->level;
++
++			break;
++		}
++
++	}
++
++	if (!exist) {
++		c_r = os_zalloc(sizeof(*c_r));
++		size_t ie_len = res->ie_len;
++		size_t beacon_ie_len = res->beacon_ie_len;
++		c_r->res = os_zalloc(sizeof(*(c_r->res)) + ie_len + beacon_ie_len);
++
++		deep_cpy_res(c_r->res, res);
++
++		c_r->alive_timer = time(NULL);
++		c_r->appear_count = 1;
++
++		bool spare_space_used = false;
++
++		for (i = 0; i < res_cache->num; i++) {
++			if (!(res_cache->res[i])) {
++				wpa_printf(MSG_DEBUG, "rdy to use spare space");
++				res_cache->res[i] = c_r;
++				spare_space_used = true;
++				break;
++			}
++		}
++
++		if (!spare_space_used) {
++
++			tmp = os_realloc(res_cache->res, (res_cache->num + 1) * sizeof(struct cache_wpa_scan_res *));
++			if (!tmp) {
++				wpa_printf(MSG_ERROR, "os_realloc fail on tmp");
++				os_free(c_r);
++				return;
++			}
++
++			tmp[res_cache->num++] = c_r;
++
++			res_cache->res = tmp;
++		}
++	}
++}
++
++static void maintain_res_cache(size_t *actual_num)
++{
++	size_t i;
++
++	time_t current_t = time(NULL);
++
++	for (i = 0; i < res_cache->num; i++) {
++
++		if (!(res_cache->res[i])) {
++			(*actual_num)--;
++			wpa_printf(MSG_DEBUG, "actual_num turns to %d, A", *actual_num);
++			continue;
++		}
++
++		if ((current_t - res_cache->res[i]->alive_timer) != 0) {
++			res_cache->res[i]->undetected_count++;
++			wpa_printf( MSG_DEBUG, "undetected this time, res_cache->res[%d]->undetected_count: %d", i, res_cache->res[i]->undetected_count );
++		} else {
++			wpa_printf( MSG_DEBUG, "detected, counter reset" );
++			res_cache->res[i]->undetected_count = 0;
++		}
++
++		if (((current_t - res_cache->res[i]->alive_timer >= TIME_LIMIT) && (res_cache->res[i]->undetected_count > COUNT_LIMIT_SMALL)) ||
++			((current_t - res_cache->res[i]->alive_timer >= IGNORE_TIME) && (res_cache->res[i]->undetected_count > COUNT_LIMIT_LARGE))) {
++			wpa_printf(MSG_ERROR, "%d seconds unrespond, timeout, undetected for %d times, current record cleared",
++						(int)(current_t - res_cache->res[i]->alive_timer),
++						res_cache->res[i]->undetected_count);
++			os_free(res_cache->res[i]->res);
++			os_free(res_cache->res[i]);
++			res_cache->res[i] = NULL;
++			(*actual_num)--;
++		} else {
++			wpa_printf(MSG_DEBUG, "bssid is " MACSTR, MAC2STR(res_cache->res[i]->res->bssid));
++
++			if (gl_var_ssid_len != 0) {
++				wpa_printf(MSG_DEBUG, "gl_var_ssid is %s", gl_var_ssid);
++			}
++
++			const u8 *ssid_;
++			size_t ssid_len;
++			const u8 *ie;
++
++			u8 ssid[64] = {0};
++
++			ie = wpa_scan_get_ie(res_cache->res[i]->res, WLAN_EID_SSID);
++			ssid_ = ie ? ie + 2 : (u8 *) "";
++			ssid_len = ie ? ie[1] : 0;
++
++			os_memcpy(ssid, ssid_, ssid_len);
++
++			wpa_printf(MSG_DEBUG, "ssid is %s", ssid);
++
++			if (!os_memcmp(res_cache->res[i]->res->bssid, gl_var_bssid, ETH_ALEN) ||
++				( gl_var_ssid_len != 0 && (ssid_len == gl_var_ssid_len) && !os_memcmp(gl_var_ssid, ssid, ssid_len))) {
++				/* wpa_printf(MSG_ERROR, "bssid: " MACSTR " tested before connection\n", MAC2STR(res_cache->res[i]->res->bssid)); */
++				wpa_printf(MSG_ERROR, "current ap being tested before connection");
++				if (current_t != res_cache->res[i]->alive_timer) {
++					wpa_printf(MSG_ERROR, "and the deattached ap is not detected, removing from cache ...\n");
++
++					os_free(res_cache->res[i]->res);
++					os_free(res_cache->res[i]);
++					res_cache->res[i] = NULL;
++
++					(*actual_num)--;
++
++					os_memset(gl_var_bssid, 0, ETH_ALEN);
++					os_memset(gl_var_ssid, 0, sizeof(gl_var_ssid));
++					gl_var_ssid_len = 0;
++				}
++			}
++		}
++	}
++
++	wpa_printf(MSG_DEBUG, "func %s ends\n", __func__);
++}
++
++void cache_res_free(void)
++{
++	size_t i;
++
++	if (res_cache == NULL)
++		return;
++
++	for (i = 0; i < res_cache->num; i++) {
++		if (!(res_cache->res[i]))
++			continue;
++		os_free(res_cache->res[i]->res);
++		os_free(res_cache->res[i]);
++	}
++	os_free(res_cache->res);
++	os_free(res_cache);
++
++	res_cache = NULL;
++
++	wpa_printf(MSG_DEBUG, "res_cache is freed");
++}
++
++
++static void cache_fetch_scan_results(struct wpa_scan_results **rscan_res)
++{
++	size_t i;
++	size_t j;
++	size_t ie_len;
++	size_t beacon_ie_len;
++	size_t actual_num;
++
++	if (!res_cache) {
++		wpa_printf(MSG_DEBUG, "initiate res_cache");
++		res_cache = os_zalloc(sizeof(*res_cache));
++		wpa_printf(MSG_DEBUG, "num %d\n", res_cache->num);
++	}
++
++	if (!(*rscan_res)) {
++		wpa_printf(MSG_ERROR, "scan_res is NULL");
++		return;
++	}
++
++	wpa_printf(MSG_DEBUG, "(*rscan_res)->num is %d", (*rscan_res)->num);
++	wpa_printf(MSG_DEBUG, "res_cache->num is %d", res_cache->num);
++
++	for (i = 0; i < (*rscan_res)->num; i++) {
++		wpa_printf(MSG_DEBUG, "round %d", i);
++		update_res_cache((*rscan_res)->res[i]);
++	}
++
++	actual_num = res_cache->num;
++
++	maintain_res_cache(&actual_num);
++
++	wpa_scan_results_free(*rscan_res);
++	(*rscan_res) = os_zalloc(sizeof(**rscan_res));
++	(*rscan_res)->num = actual_num;
++
++	(*rscan_res)->res = os_zalloc(actual_num * (sizeof(struct wpa_scan_res *)));
++
++	for (i = 0, j = 0; i < res_cache->num; i++) {
++		wpa_printf(MSG_DEBUG, "cache2scan_res, round %d", i);
++		if (res_cache->res[i])	{
++			ie_len = res_cache->res[i]->res->ie_len;
++			beacon_ie_len = res_cache->res[i]->res->beacon_ie_len;
++			(*rscan_res)->res[j] = os_zalloc( sizeof(*((*rscan_res)->res[j])) +  ie_len + beacon_ie_len);
++			deep_cpy_res((*rscan_res)->res[j], res_cache->res[i]->res);
++			j++;
++		}
++	}
++
++	wpa_printf(MSG_DEBUG, "cache_func end, actual_num is %d, j is %d, res_cache->num is %d", actual_num, j, res_cache->num);
++}
+ 
+ /**
+  * wpa_driver_nl80211_get_scan_results - Fetch the latest scan results
+@@ -4914,6 +5269,8 @@ wpa_driver_nl80211_get_scan_results(void *priv)
+ 	struct wpa_scan_results *res;
+ 
+ 	res = nl80211_get_scan_results(drv);
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++		cache_fetch_scan_results(&res);
+ 	if (res)
+ 		wpa_driver_nl80211_check_bss_status(drv, res);
+ 	return res;
+@@ -7437,13 +7794,17 @@ static int wpa_driver_nl80211_hapd_send_eapol(
+ 	u8 *pos;
+ 	int res;
+ 	int qos = flags & WPA_STA_WMM;
++	if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		if (drv->device_ap_sme || !drv->use_monitor)
++			return nl80211_send_eapol_data(bss, addr, data, data_len);
++	} else {
+ #ifndef ANDROID_P2P
+ 	if (drv->device_ap_sme || !drv->use_monitor)
+ #else
+ 	if (drv->device_ap_sme && !drv->use_monitor)
+ #endif
+ 		return nl80211_send_eapol_data(bss, addr, data, data_len);
+-
++	}
+ 	len = sizeof(*hdr) + (qos ? 2 : 0) + sizeof(rfc1042_header) + 2 +
+ 		data_len;
+ 	hdr = os_zalloc(len);
+@@ -10636,7 +10997,8 @@ static int android_pno_start(struct i802_bss *bss,
+ 	priv_cmd.total_len = bp;
+ 	ifr.ifr_data = &priv_cmd;
+ 
+-	if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
++	if(strcmp(get_wifi_vendor_name(), "southsv") == 0 ||
++		strcmp(get_wifi_vendor_name(), "eagle") == 0)
+ 	{
+ 		ret = 0;
+ 	}
+diff --git a/src/p2p/p2p.c b/src/p2p/p2p.c
+index 028ca1b..a29d0e9 100755
+--- a/src/p2p/p2p.c
++++ b/src/p2p/p2p.c
+@@ -118,11 +118,13 @@ static void p2p_expire_peers(struct p2p_data *p2p)
+ 			continue;
+ #endif
+ 
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+ 			if (dev->req_config_methods != 0)
+ 				continue;
+-		}
+-		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			if (dev->req_config_methods != 0)
++				continue;
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
+ 			if (dev->req_config_methods != 0)
+ 				continue;
+ 		}
+@@ -747,7 +749,7 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 			freq, msg.ds_params ? *msg.ds_params : -1);
+ 	}
+ 	if (scan_res) {
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+ 			if (dev->listen_freq) {
+ 				if (freq == 2412 || freq == 2437 || freq == 2462) {
+ 					dev->listen_freq = freq;
+@@ -759,8 +761,7 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
+ 				dev->listen_freq = freq;
+ 			}
+-		}
+-		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
+ 			if (dev->listen_freq) {
+ 				if (freq == 2412 || freq == 2437 || freq == 2462) {
+ 					dev->listen_freq = freq;
+@@ -772,8 +773,19 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
+ 				dev->listen_freq = freq;
+ 			}
+-		}
+-		else {
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++			if (dev->listen_freq) {
++				if (freq == 2412 || freq == 2437 || freq == 2462) {
++					dev->listen_freq = freq;
++					wpa_printf(MSG_INFO, "%s, listen_freq=%d", __func__, dev->listen_freq);
++				} else {
++					wpa_printf(MSG_INFO, "%s, freq(%d) is not 1,6,11, don't update to listen_freq", __func__, freq);
++				}
++			} else {
++				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
++				dev->listen_freq = freq;
++			}
++		} else {
+ 			dev->listen_freq = freq;
+ 		}
+ 		if (msg.group_info)
+diff --git a/src/p2p/p2p_go_neg.c b/src/p2p/p2p_go_neg.c
+index 942b1cc..59463bf 100755
+--- a/src/p2p/p2p_go_neg.c
++++ b/src/p2p/p2p_go_neg.c
+@@ -607,7 +607,12 @@ void p2p_process_go_neg_req(struct p2p_data *p2p, const u8 *sa,
+ 		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
+ 		p2p_add_dev_info(p2p, sa, dev, &msg);
+ 	}
+-
++	else if (((strcmp(get_wifi_vendor_name(), "xradio") != 0) && (dev->flags & P2P_DEV_PROBE_REQ_ONLY))
++			|| (strcmp(get_wifi_vendor_name(), "xradio") == 0))
++	{
++		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
++		p2p_add_dev_info(p2p, sa, dev, &msg);
++	}
+ 	if (dev && dev->flags & P2P_DEV_USER_REJECTED) {
+ 		p2p_dbg(p2p, "User has rejected this peer");
+ 		status = P2P_SC_FAIL_REJECTED_BY_USER;
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index ba07eb5..0880241 100755
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -3747,6 +3747,10 @@ static int p2p_ctrl_connect(struct wpa_supplicant *wpa_s, char *cmd,
+ 			return -1;
+ 	}
+ 
++	if(strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		go_intent = 14;
++		wpa_printf(MSG_ERROR, "xradio p2p force go_intent=%d", go_intent);
++	}
+ 	if(strcmp(get_wifi_vendor_name(), "broadcom") == 0) {
+ 		/* set it to be GO for better compability with more dongles */
+ 		go_intent = 14;
+diff --git a/wpa_supplicant/ctrl_iface_unix.c b/wpa_supplicant/ctrl_iface_unix.c
+old mode 100644
+new mode 100755
+index e35d2c3..7716956
+--- a/wpa_supplicant/ctrl_iface_unix.c
++++ b/wpa_supplicant/ctrl_iface_unix.c
+@@ -24,6 +24,7 @@
+ #include "config.h"
+ #include "wpa_supplicant_i.h"
+ #include "ctrl_iface.h"
++#include "wifi.h"
+ 
+ /* Per-interface ctrl_iface */
+ 
+@@ -272,7 +273,12 @@ static void wpa_supplicant_ctrl_iface_msg_cb(void *ctx, int level, int global,
+ 
+ 	if (wpa_s->ctrl_iface == NULL)
+ 		return;
+-	wpa_supplicant_ctrl_iface_send(NULL, wpa_s->ctrl_iface->sock,
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++		wpa_supplicant_ctrl_iface_send(wpa_s->ifname, wpa_s->ctrl_iface->sock,
++				       &wpa_s->ctrl_iface->ctrl_dst,
++				       level, txt, len);
++	else
++		wpa_supplicant_ctrl_iface_send(NULL, wpa_s->ctrl_iface->sock,
+ 				       &wpa_s->ctrl_iface->ctrl_dst,
+ 				       level, txt, len);
+ }
+diff --git a/wpa_supplicant/events.c b/wpa_supplicant/events.c
+old mode 100644
+new mode 100755
+index 9de8d7f..20fcfa1
+--- a/wpa_supplicant/events.c
++++ b/wpa_supplicant/events.c
+@@ -42,7 +42,7 @@
+ #include "scan.h"
+ #include "offchannel.h"
+ #include "interworking.h"
+-
++#include "wifi.h"
+ 
+ #ifndef CONFIG_NO_SCAN_PROCESSING
+ static int wpas_select_network_from_last_scan(struct wpa_supplicant *wpa_s,
+@@ -1942,6 +1942,7 @@ static int disconnect_reason_recoverable(u16 reason_code)
+ 		reason_code == WLAN_REASON_CLASS3_FRAME_FROM_NONASSOC_STA;
+ }
+ 
++extern u8 gl_var_bssid[ETH_ALEN];
+ 
+ static void wpa_supplicant_event_disassoc(struct wpa_supplicant *wpa_s,
+ 					  u16 reason_code,
+@@ -2050,13 +2051,15 @@ static void wpa_supplicant_event_disassoc_finish(struct wpa_supplicant *wpa_s,
+ #ifndef CONFIG_NO_SCAN_PROCESSING
+ 			fast_reconnect_ssid = wpa_s->current_ssid;
+ #endif /* CONFIG_NO_SCAN_PROCESSING */
+-		} else if (wpa_s->wpa_state >= WPA_ASSOCIATING)
++		} else if (wpa_s->wpa_state >= WPA_ASSOCIATING) {
++			if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++				os_memcpy(gl_var_bssid, wpa_s->bssid, ETH_ALEN);
+ #ifdef ANDROID
+ 			wpa_supplicant_req_scan(wpa_s, 0, 500000);
+ #else
+ 			wpa_supplicant_req_scan(wpa_s, 0, 100000);
+ #endif
+-		else
++		} else
+ 			wpa_dbg(wpa_s, MSG_DEBUG, "Do not request new "
+ 				"immediate scan");
+ 	} else {
+diff --git a/wpa_supplicant/main.c b/wpa_supplicant/main.c
+index ff8e996..12c0b90 100755
+--- a/wpa_supplicant/main.c
++++ b/wpa_supplicant/main.c
+@@ -18,6 +18,13 @@
+ 
+ extern struct wpa_driver_ops *wpa_drivers[];
+ 
++#define ESP_VERSION "ESP ANDROID4.4 [V1.3.0]"
++#define RSSI_FILTER_CONF "/system/bin/rssi_filter.conf"
++#define RSSI_LEVEL_SLOW "slow"
++#define RSSI_LEVEL_NORMAL "normal"
++#define RSSI_LEVEL_FAST   "fast"
++#define RSSI_LEVEL_DISABLE "disable"
++extern int gl_rssi_filter_level;
+ 
+ static void usage(void)
+ {
+@@ -144,7 +151,28 @@ int main(int argc, char *argv[])
+ 	int iface_count, exitcode = -1;
+ 	struct wpa_params params;
+ 	struct wpa_global *global;
++	FILE *frssi_conf;
++	char rssi_filter_val[16];
+ 
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0) {
++		gl_rssi_filter_level = 2;
++		if ((frssi_conf = fopen(RSSI_FILTER_CONF, "r")) == NULL)
++			wpa_printf(MSG_DEBUG, "%s open [%s] failed", __func__, RSSI_FILTER_CONF);
++		else {
++			if ((fgets(rssi_filter_val, 16, frssi_conf))) {
++				wpa_printf(MSG_DEBUG, "%s rssi_filter_content[%s]", RSSI_FILTER_CONF, rssi_filter_val);
++				if (!strncmp(rssi_filter_val, RSSI_LEVEL_DISABLE, strlen(RSSI_LEVEL_DISABLE)))
++					gl_rssi_filter_level = 0;
++				else if (!strncmp(rssi_filter_val, RSSI_LEVEL_FAST, strlen(RSSI_LEVEL_FAST)))
++					gl_rssi_filter_level = 1;
++				else if (!strncmp(rssi_filter_val, RSSI_LEVEL_NORMAL, strlen(RSSI_LEVEL_NORMAL)))
++					gl_rssi_filter_level = 2;
++				else if (!strncmp(rssi_filter_val, RSSI_LEVEL_SLOW, strlen(RSSI_LEVEL_SLOW)))
++					gl_rssi_filter_level = 3;
++			}
++			fclose(frssi_conf);
++		}
++	}
+ 	if (os_program_init())
+ 		return -1;
+ 
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index ef7ead5..d970374 100755
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -2721,15 +2721,22 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+ 			   " was accepted; op_freq=%d MHz",
+ 			   MAC2STR(sa), op_freq);
+ 
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
+-    // clear previous wpa_s->go_params because it is out of data.
++		if (strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
+ 			if (wpa_s->go_params) {
+ 				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
+ 				os_free(wpa_s->go_params);
+ 				wpa_s->go_params = NULL;
+ 			}
+-		}else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
+-    // clear previous wpa_s->go_params because it is out of data.
++		} else if (strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
++			if (wpa_s->go_params) {
++				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
++				os_free(wpa_s->go_params);
++				wpa_s->go_params = NULL;
++			}
++		} else if (strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++			// clear previous wpa_s->go_params because it is out of data.
+ 			if (wpa_s->go_params) {
+ 				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
+ 				os_free(wpa_s->go_params);
+@@ -3501,7 +3508,8 @@ void wpas_p2p_deinit_global(struct wpa_global *global)
+ 
+ static int wpas_p2p_create_iface(struct wpa_supplicant *wpa_s)
+ {
+-	if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
++	if(strcmp(get_wifi_vendor_name(), "southsv") == 0 ||
++		strcmp(get_wifi_vendor_name(), "eagle") == 0)
+ 		return 0;
+ 
+ 	if (!(wpa_s->drv_flags & WPA_DRIVER_FLAGS_DEDICATED_P2P_DEVICE) &&
+@@ -4146,6 +4154,8 @@ int wpas_p2p_connect(struct wpa_supplicant *wpa_s, const u8 *peer_addr,
+ 		go_intent = wpa_s->conf->p2p_go_intent;
+ 	else if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
+ 		go_intent = wpa_s->conf->p2p_go_intent;
++	else if (strcmp(get_wifi_vendor_name(), "eagle") == 0 && go_intent < 0)
++		go_intent = wpa_s->conf->p2p_go_intent;
+ 
+ 	if (!auth)
+ 		wpa_s->p2p_long_listen = 0;
+@@ -5474,7 +5484,20 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
+ 				timeout = 0;
+ 			}
+ 		}
+-	} else {
++	} else if(strcmp(get_wifi_vendor_name(), "xradio") == 0) {
++		timeout = P2P_MAX_CLIENT_IDLE;
++		if (wpa_s->current_ssid->mode == WPAS_MODE_INFRA) {
++			if (wpa_s->show_group_started) {
++				wpa_printf(MSG_INFO, "P2P: set P2P group idle timeout to 20s "
++				"while waiting for initial 4-way handshake to "
++				"complete");
++				timeout = P2P_MAX_CLIENT_IDLE;
++			} else {
++				timeout = 0;
++			}
++		}
++	}
++	else {
+ 		if (wpa_s->show_group_started) {
+ 			/*
+ 		 	* Use the normal group formation timeout between the end of
+diff --git a/wpa_supplicant/sme.c b/wpa_supplicant/sme.c
+old mode 100644
+new mode 100755
+index 925d132..795a266
+--- a/wpa_supplicant/sme.c
++++ b/wpa_supplicant/sme.c
+@@ -29,6 +29,8 @@
+ #include "sme.h"
+ #include "hs20_supplicant.h"
+ 
++#include "common/wpa_ctrl.h"
++#include "wifi.h"
+ #define SME_AUTH_TIMEOUT 5
+ #define SME_ASSOC_TIMEOUT 5
+ 
+@@ -154,6 +156,7 @@ static void sme_send_authentication(struct wpa_supplicant *wpa_s,
+ 	u8 ext_capab[10];
+ 	int ext_capab_len;
+ 
++	int freq = 0;
+ 	if (bss == NULL) {
+ 		wpa_msg(wpa_s, MSG_ERROR, "SME: No scan result available for "
+ 			"the network");
+@@ -411,6 +414,22 @@ static void sme_send_authentication(struct wpa_supplicant *wpa_s,
+ 		wpas_notify_network_changed(wpa_s);
+ 
+ 	wpa_s->sme.auth_alg = params.auth_alg;
++
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0) {
++		/* If multichannel concurrency is not supported, check for any frequency
++		 * conflict and take appropriate action.
++		 */
++		wpa_printf(MSG_DEBUG, "%s EAGLE: Priority choose", __func__);
++
++		if ((wpa_s->num_multichan_concurrent < 2) &&
++			((freq = wpa_drv_shared_freq(wpa_s)) > 0) && (freq != params.freq)) {
++			wpa_printf(MSG_DEBUG, "Shared interface with conflicting frequency found (%d != %d)"
++																	, freq, params.freq);
++			if (wpas_p2p_handle_frequency_conflicts(wpa_s, params.freq, ssid) < 0)
++				return;
++		}
++	}
++
+ 	if (wpa_drv_authenticate(wpa_s, &params) < 0) {
+ 		wpa_msg(wpa_s, MSG_INFO, "SME: Authentication request to the "
+ 			"driver failed");
+diff --git a/wpa_supplicant/wpa_supplicant.c b/wpa_supplicant/wpa_supplicant.c
+old mode 100644
+new mode 100755
+index b431662..716c26a
+--- a/wpa_supplicant/wpa_supplicant.c
++++ b/wpa_supplicant/wpa_supplicant.c
+@@ -51,6 +51,7 @@
+ #include "offchannel.h"
+ #include "hs20_supplicant.h"
+ #include "wnm_sta.h"
++#include "wifi.h"
+ 
+ const char *wpa_supplicant_version =
+ "wpa_supplicant v" VERSION_STR "\n"
+@@ -109,6 +110,7 @@ extern int wpa_debug_show_keys;
+ extern int wpa_debug_timestamp;
+ extern struct wpa_driver_ops *wpa_drivers[];
+ 
++extern void cache_res_free(void);
+ /* Configure default/group WEP keys for static WEP */
+ int wpa_set_wep_keys(struct wpa_supplicant *wpa_s, struct wpa_ssid *ssid)
+ {
+@@ -730,6 +732,8 @@ void wpa_supplicant_terminate_proc(struct wpa_global *global)
+ 	if (pending)
+ 		return;
+ 	eloop_terminate();
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++		cache_res_free();
+ }
+ 
+ 
+@@ -1888,6 +1892,8 @@ void wpa_supplicant_disable_network(struct wpa_supplicant *wpa_s,
+ 	}
+ }
+ 
++extern u8 gl_var_ssid[64];
++extern size_t gl_var_ssid_len;
+ 
+ /**
+  * wpa_supplicant_select_network - Attempt association with a network
+@@ -1942,6 +1948,10 @@ void wpa_supplicant_select_network(struct wpa_supplicant *wpa_s,
+ 	wpa_s->connect_without_scan = NULL;
+ 	wpa_s->disconnected = 0;
+ 	wpa_s->reassociate = 1;
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0) {
++		os_memcpy(gl_var_ssid, ssid->ssid, ssid->ssid_len);
++		gl_var_ssid_len = ssid->ssid_len;
++	}
+ 
+ 	if (wpa_supplicant_fast_associate(wpa_s) != 1)
+ 		wpa_supplicant_req_scan(wpa_s, 0, disconnected ? 100000 : 0);
+@@ -3128,6 +3138,8 @@ static void wpa_supplicant_deinit_iface(struct wpa_supplicant *wpa_s,
+ 		wpa_s->conf = NULL;
+ 	}
+ 
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++		cache_res_free();
+ 	os_free(wpa_s);
+ }
+ 
+@@ -3509,6 +3521,8 @@ void wpa_supplicant_deinit(struct wpa_global *global)
+ 	wpa_debug_close_syslog();
+ 	wpa_debug_close_file();
+ 	wpa_debug_close_linux_tracing();
++	if (strcmp(get_wifi_vendor_name(), "eagle") == 0)
++		cache_res_free();
+ }
+ 
+ 
+-- 
+1.7.9.5
+

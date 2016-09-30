@@ -1,0 +1,243 @@
+From 4cdd273b634143aac93ff5dbd8677ac71733e5fe Mon Sep 17 00:00:00 2001
+From: zhangjh <zhangjh@allwinnertech.com>
+Date: Thu, 30 Jul 2015 15:42:42 +0800
+Subject: [PATCH] add support ssv wifi
+
+---
+ hostapd/android.config          |    2 +-
+ src/drivers/driver_nl80211.c    |   19 ++++++++++++++++---
+ src/p2p/p2p.c                   |   20 +++++++++++++++++++-
+ src/p2p/p2p_go_neg.c            |    6 ++++++
+ wpa_supplicant/ctrl_iface.c     |   10 ++++++++++
+ wpa_supplicant/p2p_supplicant.c |   34 +++++++++++++++++++++++++++++++---
+ 6 files changed, 83 insertions(+), 8 deletions(-)
+ mode change 100644 => 100755 hostapd/android.config
+ mode change 100644 => 100755 src/p2p/p2p_go_neg.c
+
+diff --git a/hostapd/android.config b/hostapd/android.config
+old mode 100644
+new mode 100755
+index f51a5bf..b92059a
+--- a/hostapd/android.config
++++ b/hostapd/android.config
+@@ -20,7 +20,7 @@
+ #CFLAGS += -I../../madwifi # change to the madwifi source directory
+ 
+ # Driver interface for drivers using the nl80211 kernel interface
+-#CONFIG_DRIVER_NL80211=y
++CONFIG_DRIVER_NL80211=y
+ # driver_nl80211.c requires a rather new libnl (version 1.1) which may not be
+ # shipped with your distribution yet. If that is the case, you need to build
+ # newer libnl version and point the hostapd build to use it.
+diff --git a/src/drivers/driver_nl80211.c b/src/drivers/driver_nl80211.c
+index 7c39efd..d02d497 100755
+--- a/src/drivers/driver_nl80211.c
++++ b/src/drivers/driver_nl80211.c
+@@ -3210,6 +3210,8 @@ static int wiphy_info_handler(struct nl_msg *msg, void *arg)
+ 		info->device_ap_sme = 1;
+ 	else if(strcmp(get_wifi_vendor_name(), "realtek") == 0)
+ 		info->device_ap_sme =1;
++	else if(strcmp(get_wifi_vendor_name(), "southsv") == 0 && tb[NL80211_ATTR_DEVICE_AP_SME])
++		info->device_ap_sme =1;
+ 
+ 	wiphy_info_feature_flags(info, tb[NL80211_ATTR_FEATURE_FLAGS]);
+ 	wiphy_info_probe_resp_offload(capa,
+@@ -3350,7 +3352,11 @@ static int wpa_driver_nl80211_capa(struct wpa_driver_nl80211_data *drv)
+ 		/* Driver is new enough to support monitorless mode*/
+ 		wpa_printf(MSG_DEBUG, "nl80211: Driver is new "
+ 			  "enough to support monitor-less mode");
+-		drv->use_monitor = 0;
++
++		if(strcmp(get_wifi_vendor_name(), "southsv") == 0 )
++			drv->use_monitor = 1;
++		else
++			drv->use_monitor = 0;
+ 	}
+ #else
+ 	/*
+@@ -9870,7 +9876,7 @@ static int nl80211_set_param(void *priv, const char *param)
+ 		return 0;
+ 
+ #ifdef CONFIG_P2P
+-	if(strcmp(get_wifi_vendor_name(), "realtek") != 0) {	
++	if(strcmp(get_wifi_vendor_name(), "realtek") != 0 && strcmp(get_wifi_vendor_name(), "southsv") != 0) {
+ 		// RTK doesn't support  "driver_param=use_p2p_group_interface=1" option, 
+ 		// ignore this setting and still use p2p0 as p2p interface.
+ 		if (os_strstr(param, "use_p2p_group_interface=1")) {
+@@ -10590,7 +10596,14 @@ static int android_pno_start(struct i802_bss *bss,
+ 	priv_cmd.total_len = bp;
+ 	ifr.ifr_data = &priv_cmd;
+ 
+-	ret = ioctl(drv->global->ioctl_sock, SIOCDEVPRIVATE + 1, &ifr);
++	if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
++	{
++		ret = 0;
++	}
++	else
++	{
++		ret = ioctl(drv->global->ioctl_sock, SIOCDEVPRIVATE + 1, &ifr);
++	}
+ 
+ 	if (ret < 0) {
+ 		wpa_printf(MSG_ERROR, "ioctl[SIOCSIWPRIV] (pnosetup): %d",
+diff --git a/src/p2p/p2p.c b/src/p2p/p2p.c
+index 315c6ad..028ca1b 100755
+--- a/src/p2p/p2p.c
++++ b/src/p2p/p2p.c
+@@ -122,6 +122,10 @@ static void p2p_expire_peers(struct p2p_data *p2p)
+ 			if (dev->req_config_methods != 0)
+ 				continue;
+ 		}
++		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			if (dev->req_config_methods != 0)
++				continue;
++		}
+ 		p2p_dbg(p2p, "Expiring old peer entry " MACSTR,
+ 			MAC2STR(dev->info.p2p_device_addr));
+ 
+@@ -755,7 +759,21 @@ int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+ 				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
+ 				dev->listen_freq = freq;
+ 			}
+-		} else {
++		}
++		else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			if (dev->listen_freq) {
++				if (freq == 2412 || freq == 2437 || freq == 2462) {
++					dev->listen_freq = freq;
++					wpa_printf(MSG_INFO, "%s, listen_freq=%d", __func__, dev->listen_freq);
++				} else {
++					wpa_printf(MSG_INFO, "%s, freq(%d) is not 1,6,11, don't update to listen_freq", __func__, freq);
++				}
++			} else {
++				wpa_printf(MSG_INFO, "%s, freq -> listen_freq=%d", __func__, freq);
++				dev->listen_freq = freq;
++			}
++		}
++		else {
+ 			dev->listen_freq = freq;
+ 		}
+ 		if (msg.group_info)
+diff --git a/src/p2p/p2p_go_neg.c b/src/p2p/p2p_go_neg.c
+old mode 100644
+new mode 100755
+index 393c906..942b1cc
+--- a/src/p2p/p2p_go_neg.c
++++ b/src/p2p/p2p_go_neg.c
+@@ -601,6 +601,12 @@ void p2p_process_go_neg_req(struct p2p_data *p2p, const u8 *sa,
+ 		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
+ 		p2p_add_dev_info(p2p, sa, dev, &msg);
+ 	}
++	else if (((strcmp(get_wifi_vendor_name(), "southsv") != 0) && (dev->flags & P2P_DEV_PROBE_REQ_ONLY))
++			|| (strcmp(get_wifi_vendor_name(), "southsv") == 0))
++	{
++		wpa_printf(MSG_INFO, "%s to p2p_add_dev_info\n", __func__);
++		p2p_add_dev_info(p2p, sa, dev, &msg);
++	}
+ 
+ 	if (dev && dev->flags & P2P_DEV_USER_REJECTED) {
+ 		p2p_dbg(p2p, "User has rejected this peer");
+diff --git a/wpa_supplicant/ctrl_iface.c b/wpa_supplicant/ctrl_iface.c
+index e73a7dd..ba07eb5 100755
+--- a/wpa_supplicant/ctrl_iface.c
++++ b/wpa_supplicant/ctrl_iface.c
+@@ -4453,6 +4453,12 @@ static int p2p_ctrl_set(struct wpa_supplicant *wpa_s, char *cmd)
+ 			return 0;
+ 		}
+ 	}
++	else if(os_strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++        if (os_strcmp(cmd, "go_intent") == 0) {
++			wpa_s->conf->p2p_go_intent = atoi(param);
++			return 0;
++		}
++	}
+ 
+ 	if (os_strcmp(cmd, "ssid_postfix") == 0) {
+ 		return p2p_set_ssid_postfix(wpa_s->global->p2p, (u8 *) param,
+@@ -5262,6 +5268,10 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
+ 		if(os_strncmp(buf, "PING", 4) != 0)
+ 			wpa_printf(MSG_INFO, "[CTRL_IFACE]%s: %s", wpa_s->ifname, buf);
+ 	}
++	else if(os_strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		if(os_strncmp(buf, "PING", 4) != 0)
++			wpa_printf(MSG_INFO, "[CTRL_IFACE]%s: %s", wpa_s->ifname, buf);
++	}
+ 
+ 	if (os_strncmp(buf, WPA_CTRL_RSP, os_strlen(WPA_CTRL_RSP)) == 0 ||
+ 	    os_strncmp(buf, "SET_NETWORK ", 12) == 0 ||
+diff --git a/wpa_supplicant/p2p_supplicant.c b/wpa_supplicant/p2p_supplicant.c
+index 0e78c9d..ef7ead5 100755
+--- a/wpa_supplicant/p2p_supplicant.c
++++ b/wpa_supplicant/p2p_supplicant.c
+@@ -538,7 +538,11 @@ static int wpas_p2p_persistent_group(struct wpa_supplicant *wpa_s,
+ 			wpa_printf(MSG_INFO, "Aries IOT patch : forcing be persistent and bssid " MACSTR " as go_dev_addr!! \n\n", MAC2STR(bssid));
+ 			memcpy(go_dev_addr, bssid, ETH_ALEN);
+ 			return 1;
+-		} else {
++		}else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++			wpa_printf(MSG_INFO, "Aries IOT patch : forcing be persistent and bssid " MACSTR " as go_dev_addr!! \n\n", MAC2STR(bssid));
++			memcpy(go_dev_addr, bssid, ETH_ALEN);
++			return 1;
++		}else {
+ 			return 0;
+ 		}
+ 	}
+@@ -2716,8 +2720,15 @@ static void wpas_invitation_received(void *ctx, const u8 *sa, const u8 *bssid,
+ 		wpa_printf(MSG_DEBUG, "P2P: Invitation from peer " MACSTR
+ 			   " was accepted; op_freq=%d MHz",
+ 			   MAC2STR(sa), op_freq);
+-		
+-		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {	   
++
++		if(strcmp(get_wifi_vendor_name(), "realtek") == 0) {
++    // clear previous wpa_s->go_params because it is out of data.
++			if (wpa_s->go_params) {
++				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
++				os_free(wpa_s->go_params);
++				wpa_s->go_params = NULL;
++			}
++		}else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
+     // clear previous wpa_s->go_params because it is out of data.
+ 			if (wpa_s->go_params) {
+ 				wpa_printf(MSG_INFO, "%s() free go_params \n", __func__);
+@@ -3490,6 +3501,9 @@ void wpas_p2p_deinit_global(struct wpa_global *global)
+ 
+ static int wpas_p2p_create_iface(struct wpa_supplicant *wpa_s)
+ {
++	if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
++		return 0;
++
+ 	if (!(wpa_s->drv_flags & WPA_DRIVER_FLAGS_DEDICATED_P2P_DEVICE) &&
+ 	    wpa_s->conf->p2p_no_group_iface)
+ 		return 0; /* separate interface disabled per configuration */
+@@ -4130,6 +4144,8 @@ int wpas_p2p_connect(struct wpa_supplicant *wpa_s, const u8 *peer_addr,
+ 		go_intent = wpa_s->conf->p2p_go_intent;
+ 	else if(strcmp(get_wifi_vendor_name(), "realtek") == 0)
+ 		go_intent = wpa_s->conf->p2p_go_intent;
++	else if(strcmp(get_wifi_vendor_name(), "southsv") == 0)
++		go_intent = wpa_s->conf->p2p_go_intent;
+ 
+ 	if (!auth)
+ 		wpa_s->p2p_long_listen = 0;
+@@ -5446,6 +5462,18 @@ static void wpas_p2p_set_group_idle_timeout(struct wpa_supplicant *wpa_s)
+ 				timeout = 0;
+ 			}
+ 		}
++	}else if(strcmp(get_wifi_vendor_name(), "southsv") == 0) {
++		timeout = P2P_MAX_CLIENT_IDLE;
++		if (wpa_s->current_ssid->mode == WPAS_MODE_INFRA) {
++			if (wpa_s->show_group_started) {
++				wpa_printf(MSG_INFO, "P2P: set P2P group idle timeout to 20s "
++				"while waiting for initial 4-way handshake to "
++				"complete");
++				timeout = P2P_MAX_CLIENT_IDLE;
++			} else {
++				timeout = 0;
++			}
++		}
+ 	} else {
+ 		if (wpa_s->show_group_started) {
+ 			/*
+-- 
+1.7.9.5
+
