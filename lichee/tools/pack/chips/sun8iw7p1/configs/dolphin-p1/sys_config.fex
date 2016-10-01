@@ -1,5 +1,5 @@
-;H3 dolphin-p1 board application
-;H3 dolphin-p1 board application
+;H3 bpi-m2p board application
+;H3 bpi-m2p board application
 ;---------------------------------------------------------------------------------------------------------
 ; 说明： 脚本中的字符串区分大小写，用户可以修改"="后面的数值，但是不要修改前面的字符串
 ; 描述gpio的形式：Port:端口+组内序号<功能分配><内部电阻状态><驱动能力><输出电平状态>
@@ -7,7 +7,7 @@
 
 [product]
 version = "100"
-machine = "dolphin-p1"
+machine = "bpi-m2p"
 
 ;---------------------------------------------------------------------------------------------------------
 ; debug_mode: 是否开启串口打印模式,1:开启(建议使用), 0:关闭
@@ -78,8 +78,8 @@ next_work       = 3
 used = 1
 start_type = 1
 irkey_used = 1
-pmukey_used = 0
-pmukey_num = 0
+pmukey_used = 1
+pmukey_num = 3
 led_power = 0
 led_state = 0
 
@@ -91,7 +91,8 @@ led_state = 0
 ;-------------------------------------------------------------------------------
 [boot_init_gpio]
 used	=	1
-gpio0	=  port:PA15<1><default><default><1>
+gpio0	=  port:PL10<1><default><default><1>
+gpio1	=  port:PA15<1><default><default><1>
 
 ;----------------------------------------------------------------------------------
 ;	used: 模块使能端     1：开启模块   0：关闭模块
@@ -101,7 +102,7 @@ gpio0	=  port:PA15<1><default><default><1>
 [recovery_para]
 used =	1
 mode =	2
-recovery_key = port:PL04<0><default><default><default>
+recovery_key = port:PL01<0><default><default><default>
 
 ;----------------------------------------------------------------------------------
 ;	hid_used: 多份配置、硬件版本检测功能模块. 1: 开启, 0:关闭
@@ -179,7 +180,7 @@ force_uart_tx    = port:PF02<3><1><default><default>
 force_uart_rx    = port:PF04<3><1><default><default>
 
 [jtag_para]
-jtag_enable     = 1
+jtag_enable     = 0
 jtag_ms         = port:PA00<3><default><default><default>
 jtag_ck         = port:PA01<3><default><default><default>
 jtag_do         = port:PA02<3><default><default><default>
@@ -206,7 +207,7 @@ pll_de           = 864
 ; dram_tpr7[9:0] to set ddr3 or ddr3l clk.
 ;*****************************************************************************
 [dram_para]
-dram_clk        = 576
+dram_clk        = 672
 dram_type       = 3
 dram_zq         = 0x3b3bfb
 dram_odt_en     = 0x1
@@ -259,7 +260,8 @@ pll_ratio           = 0x111
 dram_selfresh_en    = 1
 dram_freq           = 36
 wakeup_src0         =
-wakeup_src_bt       = port:PL06<6><default><default><0>
+wakeup_src_wl       = port:PG10<4><default><default><0>
+;wakeup_src_bt       = port:PL03<6><default><default><0>
 
 ;----------------------------------------------------------------------------------
 ;i2c configuration
@@ -354,9 +356,36 @@ mode          = 0
 ;----------------------------------------------------------------------------------
 [gpio_para]
 gpio_used       = 1
-gpio_num        = 2
-gpio_pin_1      = port:PL10<1><default><default><1>
-gpio_pin_2      = port:PA15<1><default><default><0>
+gpio_num        = 29
+gpio_pin_1      = port:PA12<1><default><default><0>
+gpio_pin_2      = port:PA11<1><default><default><0>
+gpio_pin_3      = port:PA06<1><default><default><0>
+gpio_pin_4      = port:PA13<1><default><default><0>
+gpio_pin_5      = port:PA14<1><default><default><0>
+gpio_pin_6      = port:PA01<1><default><default><0>
+gpio_pin_7      = port:PA16<1><default><default><0>
+gpio_pin_8      = port:PA00<1><default><default><0>
+gpio_pin_9      = port:PA03<1><default><default><0>
+gpio_pin_10     = port:PA15<1><default><default><0>
+gpio_pin_11     = port:PC04<1><default><default><0>
+gpio_pin_12     = port:PC00<1><default><default><0>
+gpio_pin_13     = port:PC01<1><default><default><0>
+gpio_pin_14     = port:PA02<1><default><default><0>
+gpio_pin_15     = port:PC02<1><default><default><0>
+gpio_pin_16     = port:PC03<1><default><default><0>
+gpio_pin_17     = port:PC07<1><default><default><0>
+gpio_pin_18     = port:PA19<1><default><default><0>
+gpio_pin_19     = port:PA18<1><default><default><0>
+gpio_pin_20     = port:PA07<1><default><default><0>
+gpio_pin_21     = port:PA08<1><default><default><0>
+gpio_pin_22     = port:PL02<1><default><default><0>
+gpio_pin_23     = port:PA09<1><default><default><0>
+gpio_pin_24     = port:PA10<1><default><default><0>
+gpio_pin_25     = port:PL04<1><default><default><0>
+gpio_pin_26     = port:PA17<1><default><default><0>
+gpio_pin_27     = port:PA21<1><default><default><0>
+gpio_pin_28     = port:PA20<1><default><default><0>
+gpio_pin_29     = port:PL10<1><default><default><1>
 
 [led_assign]
 normal_led      = "gpio_pin_2"
@@ -451,7 +480,7 @@ nand0_ndqs          = port:PC16<2><0><1><default>
 [boot_disp]
 advert_disp     = 0
 auto_hpd        = 1
-output_type     = 2
+output_type     = 4
 hdmi_channel    = 0
 hdmi_mode       = 4
 cvbs_channel    = 1
@@ -524,27 +553,29 @@ pwm_positive        = port:PA05<3><0><default><default>
 ;   PD05  *                 PD11   *           *    PD17   *           *       ;
 ;------------------------------------------------------------------------------;
 [gmac0]
-gmac_used          = 2
-;gmac_rxd3          = port:PD00<2><default><3><default>
-;gmac_rxd2          = port:PD01<2><default><3><default>
-;gmac_rxd1          = port:PD02<2><default><3><default>
-;gmac_rxd0          = port:PD03<2><default><3><default>
-;gmac_rxclk         = port:PD04<2><default><3><default>
-;gmac_rxdv          = port:PD05<2><default><3><default>
+gmac_used          = 1
+gmac_rxd3          = port:PD00<2><default><3><default>
+gmac_rxd2          = port:PD01<2><default><3><default>
+gmac_rxd1          = port:PD02<2><default><3><default>
+gmac_rxd0          = port:PD03<2><default><3><default>
+gmac_rxclk         = port:PD04<2><default><3><default>
+gmac_rxdv          = port:PD05<2><default><3><default>
 ;gmac_rxerr         = port:PD06<2><default><3><default>
-;gmac_txd3          = port:PD07<2><default><3><default>
-;gmac_txd2          = port:PD08<2><default><3><default>
-;gmac_txd1          = port:PD09<2><default><3><default>
-;gmac_txd0          = port:PD10<2><default><3><default>
+gmac_txd3          = port:PD07<2><default><3><default>
+gmac_txd2          = port:PD08<2><default><3><default>
+gmac_txd1          = port:PD09<2><default><3><default>
+gmac_txd0          = port:PD10<2><default><3><default>
 ;gmac_crs           = port:PD11<2><default><3><default>
-;gmac_txclk         = port:PD12<2><default><3><default>
-;gmac_txen          = port:PD13<2><default><3><default>
+gmac_txclk         = port:PD12<2><default><3><default>
+gmac_txen          = port:PD13<2><default><3><default>
 ;gmac_txerr         = port:PD14<2><default><3><default>
-;gmac_col           = port:PD15<2><default><3><default>
-;gmac_mdc           = port:PD16<2><default><3><default>
-;gmac_mdio          = port:PD17<2><default><3><default>
+gmac_col           = port:PD15<2><default><3><default>
+gmac_mdc           = port:PD16<2><default><3><default>
+gmac_mdio          = port:PD17<2><default><3><default>
 gmac_power1        =
 
+[gmac_phy_power]
+gmac_phy_power_en   = port:PD06<1><default><default><0>
 ;--------------------------------------------------------------------------------
 ;vip (video input port) configuration
 ;vip_used: 0:disable 1:enable
@@ -581,7 +612,7 @@ gmac_power1        =
 
 [csi0]
 
-vip_used                 = 0
+vip_used                 = 1
 vip_mode                 = 0
 vip_dev_qty              = 1
 vip_define_sensor_list   = 0
@@ -603,12 +634,12 @@ vip_csi_sda              = port:PE13<2><default><default><default>
 
 vip_dev0_mname           = "ov5640"
 vip_dev0_pos             = "rear"
-vip_dev0_lane            = 1
-vip_dev0_twi_id          = 0
+vip_dev0_lane            = 4
+vip_dev0_twi_id          = 2
 vip_dev0_twi_addr        = 0x78
-vip_dev0_isp_used        = 0
-vip_dev0_fmt             = 0
-vip_dev0_stby_mode       = 0
+vip_dev0_isp_used        = 1
+vip_dev0_fmt             = 1
+vip_dev0_stby_mode       = 1
 vip_dev0_vflip           = 0
 vip_dev0_hflip           = 0
 vip_dev0_iovdd           = ""
@@ -619,9 +650,9 @@ vip_dev0_dvdd            = ""
 vip_dev0_dvdd_vol        = 1500000
 vip_dev0_afvdd           = ""
 vip_dev0_afvdd_vol       = 2800000
-vip_dev0_power_en        =
-vip_dev0_reset           =
-vip_dev0_pwdn            =
+vip_dev0_power_en        = port:PD14<1><default><default><default>
+vip_dev0_reset           = port:PE14<1><default><default><default>
+vip_dev0_pwdn            = port:PE15<1><default><default><default>
 vip_dev0_flash_en        =
 vip_dev0_flash_mode      =
 vip_dev0_af_pwdn         =
@@ -739,7 +770,7 @@ sdc_2xmode        = 1
 sdc_ddrmode       = 1
 
 [mmc2_para]
-sdc_used          = 0
+sdc_used          = 1
 sdc_detmode       = 3
 sdc_buswidth      = 8
 sdc_clk           = port:PC05<3><1><2><default>
@@ -766,7 +797,7 @@ sdc_ddrmode       = 1
 ; sim card configuration
 ;--------------------------------------------------------------------------------
 [smc_para]
-smc_used            =
+smc_used            = 0
 smc_rst             = port:PA09<2><default><default><default>
 smc_vppen           = port:PA20<3><default><default><default>
 smc_vppp            = port:PA21<3><default><default><default>
@@ -793,13 +824,13 @@ smc_sda             = port:PA08<2><default><default><default>
 ;--------------------------------
 [usbc0]
 usb_used            = 1
-usb_port_type       = 1
-usb_detect_type     = 0
-usb_id_gpio         =
-usb_det_vbus_gpio   =
-usb_drv_vbus_gpio   = port:PL02<1><0><default><0>
-usb_host_init_state = 1
-usb_restrict_gpio   =
+usb_port_type       = 2
+usb_detect_type     = 1
+usb_id_gpio         = port:PL06<0><1><default><default>
+usb_det_vbus_gpio   = port:PL06<0><1><default><default>
+usb_drv_vbus_gpio   = port:PD11<1><0><default><0>
+usb_host_init_state = 0
+usb_restrict_gpio   = 0
 usb_restric_flag    = 0
 usb_restric_voltage = 3550000
 usb_restric_capacity= 5
@@ -824,8 +855,8 @@ usb_not_suspend     = 0
 ;---       USB2控制标志
 ;--------------------------------
 [usbc2]
-usb_used            = 0
-usb_drv_vbus_gpio   =
+usb_used            = 1
+usb_drv_vbus_gpio   = 
 usb_restrict_gpio   =
 usb_host_init_state = 1
 usb_restric_flag    = 0
@@ -840,7 +871,7 @@ usb_not_suspend     = 0
 usb_used            = 1
 usb_drv_vbus_gpio   =
 usb_restrict_gpio   =
-usb_host_init_state = 0
+usb_host_init_state = 1
 usb_restric_flag    = 0
 usb_regulator_io    = "nocare"
 usb_regulator_vol   = 0
@@ -876,9 +907,9 @@ serial_unique       = 0
 ;lpo_use_apclk: ""- not use, "losc_out"- a23/33/H3, "ac10032k1"、"ac10032k2"、"ac10032k3"- a80
 ;--------------------------------------------------------------------------------
 [module_para]
-module_power0       = port:PL07<1><default><default><1>
+module_power0       = 
 module_power0_vol   = 0
-module_power1       = port:PG13<1><default><default><0>
+module_power1       = 
 module_power1_vol   = 1
 module_power2       =
 module_power2_vol   =
@@ -900,10 +931,10 @@ lpo_use_apclk       = "losc_out"
 [wifi_para]
 wifi_used             = 1
 wifi_sdc_id           = 1
-wifi_usbc_id          = 3
+wifi_usbc_id          = 1
 wifi_usbc_type        = 1
-wl_reg_on             = port:PG11<1><default><default><0>
-wl_host_wake          = port:PG10<0><default><default><0>
+wl_reg_on             = port:PL07<1><default><default><0>
+wl_host_wake          = port:PG10<0><default><default><0> 
 wl_host_wake_invert   = 0
 
 ;--------------------------------------------------------------------------------
@@ -921,9 +952,9 @@ wl_host_wake_invert   = 0
 bt_used               = 1
 bt_uart_id            = 1
 bt_uart_baud          = 1500000
-bt_rst_n              = port:PA13<1><default><default><0>
-bt_wake               = port:PG12<1><default><default><0>
-bt_host_wake          = port:PL06<0><default><default><0>
+bt_rst_n              = port:PG12<1><default><default><0> 
+bt_wake               = port:PG13<1><default><default><0>
+bt_host_wake          = port:PG11<0><default><default><0>
 bt_host_wake_invert   = 0
 
 ;--------------------------------------------------------------------------------
@@ -1013,10 +1044,10 @@ adcdrc_used       		= 0
 dacdrc_used       		= 0
 adchpf_used       		= 0
 dachpf_used       		= 0
-audio_pa_ctrl          	= port:PA16<1><default><default><0>
+audio_pa_ctrl          	= port:PL01<1><default><default><0>
 
 [spdif0]
-spdif_used          = 1
+spdif_used          = 0
 spdif_dout          = port:PA17<2><1><default><default>
 
 [audiohub]
@@ -1059,13 +1090,15 @@ ir_power_key_code12  = 0x4d
 ir_addr_code12       = 0xff40
 ir_power_key_code13  = 0x88
 ir_addr_code13       = 0xdd22
+ir_power_key_code14  = 0x46
+ir_addr_code14       = 0x4040
 
 
 ;----------------------------------------------------------------------------------
 ;ir tx--- infra remote configuration
 ;----------------------------------------------------------------------------------
 [cir]
-ir_used             = 0
+ir_used             = 1
 ir_tx               = port:PH07<2><default><default><default>
 
 
@@ -1218,7 +1251,7 @@ s_system_power     = 50
 ;scr configuration
 ;----------------------------------------------------------------------------------
 [sim0]
-scr_used            = 1
+scr_used            = 0
 scr_vccen           = port:PA06<2><default><default><default>
 scr_slk             = port:PA07<2><default><default><default>
 scr_sda             = port:PA08<2><default><default><default>
@@ -1230,7 +1263,7 @@ scr_det             = port:PA10<2><default><default><default>
 ;tsc configuration
 ;--------------------------------------------------------------------------------
 [ts0]
-tsc_used			= 1
+tsc_used			= 0
 tsc_clk				= port:PE00<3><default><default><default>
 tsc_err				= port:PE01<3><default><default><default>
 tsc_sync			= port:PE02<3><default><default><default>
@@ -1248,8 +1281,8 @@ tsc_d7				= port:PE11<3><default><default><default>
 ;gpio key
 ;--------------------------------------------------------------------------------
 [gpio_power_key]
-key_used				= 0
-key_io					= port:PL04<6><default><default><0>
+key_used				= 1
+key_io					= port:PL03<6><default><default><0>
 
 ;----------------------------------------------------------------------------------
 ; key para
