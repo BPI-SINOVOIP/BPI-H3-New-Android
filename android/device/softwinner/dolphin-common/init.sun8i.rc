@@ -623,9 +623,23 @@ on property:sys.aw_boot_completed=1
     start securefile
     start systemmixservice
     start isomountmanager
+
+
+#BPI-M2-Plus TCP adb
+setprop service.adb.tcp.port 5555  
+   stop adbd  
+   start adbd  
+
+#BPI-M2-Plus
 #csi module
     insmod /system/vendor/modules/videobuf-core.ko
     insmod /system/vendor/modules/videobuf-dma-contig.ko
+    insmod /system/vendor/modules/cci.ko
+    insmod /system/vendor/modules/vfe_os.ko
+    insmod /system/vendor/modules/vfe_subdev.ko
+    insmod /system/vendor/modules/hi253.ko
+    insmod /system/vendor/modules/ov5640.ko
+    insmod /system/vendor/modules/vfe_v4l2.ko
     insmod /system/vendor/modules/uvcvideo.ko
 #spdif
     insmod /system/vendor/modules/sunxi_spdif.ko

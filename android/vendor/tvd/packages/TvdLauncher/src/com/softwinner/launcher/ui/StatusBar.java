@@ -14,10 +14,21 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+//Justin porting for BPI-M2P Menu Start
+import android.app.Instrumentation;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.DataOutputStream;
+import java.io.*;
+//Justin porting for BPI-M2P Menu End
 
 public class StatusBar extends RelativeLayout implements IStatusBar{   
         
     private ImageView mHome;
+    //Justin porting for BPI-M2P Menu Start
+    private ImageView mSsettings;    
+    //Justin porting for BPI-M2P Menu End
+
     private StatusbarRight mStatusbarRight;
     private final int [] HOME_ID = {
             R.drawable.shome,
@@ -46,6 +57,7 @@ public class StatusBar extends RelativeLayout implements IStatusBar{
         }else{
             mHome.setImageResource(HOME_ID[0]);
         }
+
     }
 
     @Override
@@ -61,6 +73,32 @@ public class StatusBar extends RelativeLayout implements IStatusBar{
                 mContext.startActivity(intent);
             }
         });
+
+        //Justin porting for BPI-M2P Menu Start
+        mSsettings = (ImageView)findViewById(R.id.ssettings);
+        mSsettings.setImageResource(R.drawable.ssettings);
+        mSsettings.setOnClickListener(new OnClickListener() {            
+           @Override
+           public void onClick(View arg0) {
+	      
+          	try {
+            		Runtime command = Runtime.getRuntime();
+            		Process proc;
+            		DataOutputStream opt;
+           		proc = command.exec("su");
+            		opt = new DataOutputStream(proc.getOutputStream());
+           		opt.writeBytes("input keyevent 10008\n");
+
+                    } catch (IOException e) {
+                     // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+            }
+        });
+        //Justin porting for BPI-M2P Menu End
+
+
         mStatusbarRight = (StatusbarRight)findViewById(R.id.statusbar_right);
     }
 

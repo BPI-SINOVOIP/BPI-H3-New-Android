@@ -58,12 +58,15 @@ PRODUCT_PACKAGES += \
 include frameworks/av/media/libcedarc/libcdclist.mk
 include frameworks/av/media/libcedarx/libcdxlist.mk
 
+
+#BPI-M2-Plus IR 
 PRODUCT_COPY_FILES += \
     device/softwinner/common/configs/keylayout/sunxi-ir.kl:system/usr/keylayout/sunxi-ir.kl \
     device/softwinner/common/configs/keylayout/customer_ir_9f00.kl:system/usr/keylayout/customer_ir_9f00.kl \
     device/softwinner/common/configs/keylayout/customer_ir_dd22.kl:system/usr/keylayout/customer_ir_dd22.kl \
     device/softwinner/common/configs/keylayout/customer_ir_fb04.kl:system/usr/keylayout/customer_ir_fb04.kl \
-    device/softwinner/common/configs/keylayout/customer_ir_ff00.kl:system/usr/keylayout/customer_ir_ff00.kl
+    device/softwinner/common/configs/keylayout/customer_ir_ff00.kl:system/usr/keylayout/customer_ir_ff00.kl \
+    device/softwinner/common/configs/keylayout/customer_ir_4040.kl:system/usr/keylayout/customer_ir_4040.kl
 
 # define virtual mouse key
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -96,10 +99,11 @@ PRODUCT_PACKAGES += \
 #-------------------------------------------------
 
 #------------------ Dragon Series apk --------------------------
-PRODUCT_PACKAGES += \
-    DragonAging \
-    DragonSN \
-    DragonBox
+#BPI-M2-Plus 
+#PRODUCT_PACKAGES += \
+#    DragonAging \
+#    DragonSN \
+#    DragonBox
 
 PRODUCT_PROPERTY_OVERRIDES += \
 	ro.sw.testapkpackage=com.softwinner.dragonbox \

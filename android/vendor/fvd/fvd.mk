@@ -2,9 +2,9 @@
 	
 # miracast
 #common System APK
+# BPI-M2-Plus
 PRODUCT_PACKAGES += \
-	FireLauncher \
-	HunanOTT-STD \
+	TvdLauncher \
 	TvdSettings2 \
 	TvdFileManager \
 	TvdSettings \
@@ -14,6 +14,15 @@ PRODUCT_PACKAGES += \
 	SettingsAssist2 \
 	MiracastReceiver \
 	AllCast
+
+
+#------------------ BPI-M2-Plus 3rd-party apk --------------------------
+PRODUCT_PACKAGES += \
+	CameraFi    \
+	kodi-16     \
+        Pinyin      \
+        Zhuyin        
+
 	
 #install apk's lib to system/lib
 PRODUCT_PACKAGES += \
