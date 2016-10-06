@@ -675,6 +675,13 @@ static int geth_suspend(struct device *dev)
 
 	device_enable_async_suspend(dev);
 
+         
+#ifdef CONFIG_GMAC_PHY_POWER
+	gpio_set_value(priv->gpio_power_hd, 1);
+        pr_debug("BPI-M2Plus_suspend\n");
+#endif
+
+
 	return 0;
 }
 
@@ -695,6 +702,13 @@ static int geth_resume(struct device *dev)
 	priv->is_suspend = false;
 
 	device_disable_async_suspend(dev);
+
+
+#ifdef CONFIG_GMAC_PHY_POWER
+	gpio_set_value(priv->gpio_power_hd, 1);
+        pr_debug("BPI-M2Plus_resume\n");
+#endif
+
 
 	return ret;
 }
