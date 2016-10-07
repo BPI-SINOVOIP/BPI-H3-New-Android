@@ -162,7 +162,7 @@ PRODUCT_CHARACTERISTICS := homlet
 PRODUCT_BRAND := Allwinner
 PRODUCT_NAME := dolphin_bpi_m2p
 PRODUCT_DEVICE := dolphin-bpi-m2p
-PRODUCT_MODEL := dolphin
+PRODUCT_MODEL := BPI-M2-Plus
 PRODUCT_MANUFACTURER := Allwinner
 
 #pack parameter
