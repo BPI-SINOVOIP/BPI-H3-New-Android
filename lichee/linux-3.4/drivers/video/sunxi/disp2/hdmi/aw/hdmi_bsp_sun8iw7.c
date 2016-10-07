@@ -7,6 +7,11 @@ static struct video_para glb_video;
 static unsigned int hdmi_version;
 //static struct audio_para glb_audio;
 
+//Justin Porting Start  
+static unsigned int tmp_rcal_100, tmp_rcal_200;
+static unsigned int rcal_flag;
+//Justin Porting End
+
 static int hdmi_phy_set(struct video_para *video);
 
 struct para_tab
@@ -152,6 +157,13 @@ static void hdmi_phy_init(struct video_para *video)
 	hdmi_writel(0x1002c,hdmi_readl(0x1002c)|0x02000000);
 	hdmi_udelay(100000);
 	tmp = hdmi_readl(0x10038);
+        
+        //Justin Porting Start  
+        tmp_rcal_100 = (tmp & 0x3f)>>1;
+	tmp_rcal_200 = (tmp & 0x3f)>>2;
+	rcal_flag = 1;
+        //Justin Porting End
+
 	hdmi_writel(0x1002c,hdmi_readl(0x1002c)|0xC0000000);
 	hdmi_writel(0x1002c,hdmi_readl(0x1002c)|((tmp&0x1f800)>>11));
 	hdmi_writel(0x10020,0x01FF0F7F);
@@ -174,6 +186,12 @@ static int hdmi_phy_set(struct video_para *video)
 {
 	unsigned int id;
 	unsigned int tmp;
+        
+        //Justin Porting Start  
+        if (0 == rcal_flag)
+	hdmi_phy_init(video);
+        //Justin Porting End
+
 
 	id = get_vid(video->vic);
 	hdmi_writel(0x10020,hdmi_readl(0x10020)&(~0xf000));
@@ -212,7 +230,10 @@ static int hdmi_phy_set(struct video_para *video)
 			hdmi_writel(0x1002c,hdmi_readl(0x1002c)|((tmp&0x1f800)>>11));
 			hdmi_writel(0x10020,0x01FFFF7F);
 			hdmi_writel(0x10024,0x8063a800);
-			hdmi_writel(0x10028,0x0F81C405);
+			//Justin Porting Start 
+			//hdmi_writel(0x10028,0x0F81C405);
+			hdmi_writel(0x10028,0x0F81C485);
+			//Justin Porting End
 			break;
 		case 4:
 			hdmi_writel(0x1002c,0x39dc5040);
@@ -224,9 +245,15 @@ static int hdmi_phy_set(struct video_para *video)
 			tmp = hdmi_readl(0x10038);
 			hdmi_writel(0x1002c,hdmi_readl(0x1002c)|0xC0000000);
 			hdmi_writel(0x1002c,hdmi_readl(0x1002c)|((tmp&0x1f800)>>11));
-			hdmi_writel(0x10020,0x01FFFF7F);
-			hdmi_writel(0x10024,0x8063b000);
-			hdmi_writel(0x10028,0x0F81C405);
+                        //Justin Porting Start  
+			//hdmi_writel(0x10020,0x01FFFF7F);
+			//hdmi_writel(0x10024,0x8063b000);
+			//hdmi_writel(0x10028,0x0F81C405);
+                        hdmi_writel(0x10020, 0x11FFFF7F);
+			hdmi_writel(0x10024, 0x80623000 | tmp_rcal_200);
+			hdmi_writel(0x10028, 0x0F814385);
+                        //Justin Porting End
+
 			break;
 		case 11:
 			hdmi_writel(0x1002c,0x39dc5040);
@@ -238,9 +265,15 @@ static int hdmi_phy_set(struct video_para *video)
 			tmp = hdmi_readl(0x10038);
 			hdmi_writel(0x1002c,hdmi_readl(0x1002c)|0xC0000000);
 			hdmi_writel(0x1002c,hdmi_readl(0x1002c)|((tmp&0x1f800)>>11));
-			hdmi_writel(0x10020,0x01FFFF7F);
-			hdmi_writel(0x10024,0x8063b000);
-			hdmi_writel(0x10028,0x0F81C405);
+                        //Justin Porting Start 
+			//hdmi_writel(0x10020,0x01FFFF7F);
+			//hdmi_writel(0x10024,0x8063b000);
+			//hdmi_writel(0x10028,0x0F81C405);
+                        hdmi_writel(0x10020, 0x11FFFF7F);
+		 	hdmi_writel(0x10024, 0x80623000 | tmp_rcal_200);
+			hdmi_writel(0x10028, 0x0F80C285);                  
+		        //Justin Porting End
+
 			break;
 		default:
 			return -1;
@@ -256,6 +289,9 @@ void bsp_hdmi_set_version(unsigned int version)
 void bsp_hdmi_set_addr(unsigned int base_addr)
 {
 	hdmi_base_addr = base_addr;
+        //Justin Porting Start  
+        rcal_flag = 0;
+        //Justin Porting End
 }
 
 void bsp_hdmi_inner_init(void)
