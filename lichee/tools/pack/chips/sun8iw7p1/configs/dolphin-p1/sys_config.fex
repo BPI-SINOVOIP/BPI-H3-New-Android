@@ -80,8 +80,8 @@ start_type = 1
 irkey_used = 1
 pmukey_used = 1
 pmukey_num = 3
-led_power = 0
-led_state = 0
+led_power = 1
+led_state = 1
 
 ;-------------------------------------------------------------------------------
 ; 	boot阶段上电初始化GPIO
@@ -388,8 +388,8 @@ gpio_pin_28     = port:PA20<1><default><default><0>
 gpio_pin_29     = port:PL10<1><default><default><1>
 
 [led_assign]
-normal_led      = "gpio_pin_2"
-standby_led     = "gpio_pin_1"
+normal_led      = "gpio_pin_29"
+standby_led     = "gpio_pin_10"
 
 ;----------------------------------------------------------------------------------
 ;thermal configuration
