@@ -1,14 +1,14 @@
 # Add Google Apps and Services
-PRODUCT_PACKAGES += \
-	CalendarGoogle \
-	GoogleContactsSyncAdapter \
-	GoogleEars \
-	LatinImeGoogle \
-	MediaUploader \
-	Music2 \
-    Chrome \
-    BrowserProviderProxy \
-	FaceLock
+##PRODUCT_PACKAGES += \
+##	CalendarGoogle \
+##	GoogleContactsSyncAdapter \
+##	GoogleEars \
+##	LatinImeGoogle \
+##	MediaUploader \
+##	Music2 \
+##    Chrome \
+##   BrowserProviderProxy \
+##	FaceLock
 
 #not use
 #GalleryGoogle
@@ -30,21 +30,21 @@ PRODUCT_PACKAGES += \
 #	Maps \
 #	Street \
 
+#BPI-M2 Add 
+PRODUCT_PACKAGES += \
+	YouTube \
+	Videos \
+	GalleryGoogle
 
 #priv apps	
 PRODUCT_PACKAGES += \
-	GoogleCalendarProvider \
 	GoogleBackupTransport \
-	GoogleFeedback \
 	GoogleLoginService \
-	GooglePartnerSetup \
 	GoogleServicesFramework \
 	GoogleOneTimeInitializer \
 	Phonesky \
 	PrebuiltGmsCore \
-	talkback \
 	Velvet
-#	SetupWizard
 
 
 #frameworks jar
