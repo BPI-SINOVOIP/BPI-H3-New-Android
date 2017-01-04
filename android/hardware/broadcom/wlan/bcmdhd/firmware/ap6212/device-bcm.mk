@@ -22,4 +22,8 @@ PRODUCT_COPY_FILES += \
     hardware/broadcom/wlan/bcmdhd/firmware/ap6212/fw_bcm43438a0_apsta.bin:system/vendor/modules/fw_bcm43438a0_apsta.bin \
     hardware/broadcom/wlan/bcmdhd/firmware/ap6212/fw_bcm43438a0_p2p.bin:system/vendor/modules/fw_bcm43438a0_p2p.bin \
     hardware/broadcom/wlan/bcmdhd/firmware/ap6212/nvram_ap6212.txt:system/vendor/modules/nvram_ap6212.txt \
-    hardware/broadcom/wlan/bcmdhd/firmware/ap6212/bcm43438a0.hcd:system/vendor/modules/ap6212.hcd
+    hardware/broadcom/wlan/bcmdhd/firmware/ap6212/bcm43438a0.hcd:system/vendor/modules/ap6212.hcd \
+     hardware/broadcom/wlan/bcmdhd/firmware/ap6212/fw_bcm43438a1.bin:system/vendor/modules/fw_bcm43438a1.bin \
+    hardware/broadcom/wlan/bcmdhd/firmware/ap6212/fw_bcm43438a1_apsta.bin:system/vendor/modules/fw_bcm43438a1_apsta.bin \
+    hardware/broadcom/wlan/bcmdhd/firmware/ap6212/fw_bcm43438a1_p2p.bin:system/vendor/modules/fw_bcm43438a1_p2p.bin \
+    hardware/broadcom/wlan/bcmdhd/firmware/ap6212/bcm43438a1.hcd:system/vendor/modules/BCM43438A1.hcd
