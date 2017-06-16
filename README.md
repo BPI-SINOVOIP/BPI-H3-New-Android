@@ -1,7 +1,8 @@
 # BPI-M2-Plus Android 4.4 Source code (SDK1.2)
 ----------
 ###1 Build Android BSP
- $ cd lichee
+
+   $ cd lichee
  
    $ ./build.sh config    
       
@@ -37,6 +38,7 @@ Choice: 1
 ***********
 
 ###2 Build Android 
+
    $cd ../android
 
    $source build/envsetup.sh
