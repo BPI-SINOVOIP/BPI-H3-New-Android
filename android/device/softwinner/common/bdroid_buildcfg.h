@@ -17,7 +17,7 @@
 #ifndef _BDROID_BUILDCFG_H
 #define _BDROID_BUILDCFG_H
 
-#define BTM_DEF_LOCAL_NAME "BPI-M2-Plus"
+#define BTM_DEF_LOCAL_NAME "BPI-M2-Plus-Zero"
 
 // SERVICE_CLASS:0x5A (Bit17 -Networking,Bit19 - Capturing,Bit20 -Object Transfer,Bit22 -Telephony)
 // MAJOR CLASS: COMPUTER
