@@ -166,5 +166,5 @@ PRODUCT_MODEL := BPI-M2-Plus
 PRODUCT_MANUFACTURER := Allwinner
 
 #pack parameter
-PACK_BOARD := dolphin-p1
+PACK_BOARD := bpi-m2p
 
