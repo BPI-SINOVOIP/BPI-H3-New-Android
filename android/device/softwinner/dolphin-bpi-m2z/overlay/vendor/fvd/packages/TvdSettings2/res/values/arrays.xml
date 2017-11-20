@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Display settings.  The hdmi output mode. These are shown in a list dialog. -->
+    <string-array name="hdmi_output_mode_720p_entries">
+        <item>HDMI 720P 50HZ</item>
+        <item>HDMI 720P 60HZ</item>
+    </string-array>
+
+    <!-- Do not translate. -->
+    <string-array name="hdmi_output_mode_720p_values" translatable="false">
+        <!-- Do not translate. -->
+        <item>4</item>
+        <!-- Do not translate. -->
+        <item>5</item>
+    </string-array>
+    <string-array name="hdmi_output_mode_entries">
+        <item>480P</item> <!-- HDMI 480P -->
+        <item>576P</item> <!-- HDMI 576P -->
+        <item>720P 50Hz</item> <!-- HDMI 720P 50Hz -->
+        <item>720P 60Hz</item> <!-- HDMI 720P 60Hz -->
+        <item>1080I 50Hz</item> <!-- HDMI 1080I 50Hz -->
+        <item>1080I 60Hz</item> <!-- HDMI 1080I 60Hz -->
+        <item>1080P 24Hz</item> <!-- HDMI 1080P 24Hz -->
+        <item>1080P 50Hz</item> <!-- HDMI 1080P 50Hz-->
+        <item>1080P 60Hz</item> <!-- HDMI 1080P 60Hz -->
+        <item>4K 30HZ</item> <!-- HDMI 4K 30HZ-->
+    </string-array>
+    <integer-array name="hdmi_output_mode_values">
+        <item>0x402</item> <!-- HDMI 480P -->
+        <item>0x403</item> <!-- HDMI 576P -->
+        <item>0x404</item> <!-- HDMI 720P 50Hz -->
+        <item>0x405</item> <!-- HDMI 720P 60Hz -->
+        <item>0x406</item> <!-- HDMI 1080I 50Hz -->
+        <item>0x407</item> <!-- HDMI 1080I 60Hz -->
+        <item>0x408</item> <!-- HDMI 1080P 24Hz -->
+        <item>0x409</item> <!-- HDMI 1080P 50Hz-->
+        <item>0x40a</item> <!-- HDMI 1080P 60Hz -->
+        <item>0x41c</item> <!-- HDMI 4K 30HZ -->
+    </integer-array>
+
+    <string-array name="hdmi_output_mode_without_4k_entries">
+        <item>480P</item> <!-- HDMI 480P -->
+        <item>576P</item> <!-- HDMI 576P -->
+        <item>720P 50Hz</item> <!-- HDMI 720P 50Hz -->
+        <item>720P 60Hz</item> <!-- HDMI 720P 60Hz -->
+        <item>1080I 50Hz</item> <!-- HDMI 1080I 50Hz -->
+        <item>1080I 60Hz</item> <!-- HDMI 1080I 60Hz -->
+        <item>1080P 24Hz</item> <!-- HDMI 1080P 24Hz -->
+        <item>1080P 50Hz</item> <!-- HDMI 1080P 50Hz-->
+        <item>1080P 60Hz</item> <!-- HDMI 1080P 60Hz -->
+    </string-array>
+    <integer-array name="hdmi_output_mode_without_4k_values">
+        <item>0x402</item> <!-- HDMI 480P -->
+        <item>0x403</item> <!-- HDMI 576P -->
+        <item>0x404</item> <!-- HDMI 720P 50Hz -->
+        <item>0x405</item> <!-- HDMI 720P 60Hz -->
+        <item>0x406</item> <!-- HDMI 1080I 50Hz -->
+        <item>0x407</item> <!-- HDMI 1080I 60Hz -->
+        <item>0x408</item> <!-- HDMI 1080P 24Hz -->
+        <item>0x409</item> <!-- HDMI 1080P 50Hz-->
+        <item>0x40a</item> <!-- HDMI 1080P 60Hz -->
+    </integer-array>
+
+    <string-array name="cvbs_output_mode_entries">
+        <item>PAL</item> <!-- PAL -->
+        <item>NTSC</item> <!-- NTSC -->
+    </string-array>
+
+    <integer-array name="cvbs_output_mode_values">
+        <item>0x20b</item> <!-- PAL -->
+        <item>0x20e</item> <!-- NTSC -->
+    </integer-array>
+</resources>
