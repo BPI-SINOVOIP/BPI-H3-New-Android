@@ -1,4 +1,4 @@
-# BPI-M2-Plus Android 4.4 Source code (SDK1.2)
+# BPI-M2-Plus-Zero Android 4.4 Source code (SDK1.2)
 ----------
 ###1 Build Android BSP
 
@@ -9,28 +9,28 @@
 
 Welcome to mkscript setup progress
 All available chips:
-   1. sun8iw6p1
-   2. sun8iw7p1
-   3. sun8iw8p1
-   4. sun9iw1p1
- 
-Choice: 1
+
+   0. sun8iw7p1
+   
+Choice: 0
 
 
 All available platforms:
-   1. android
-   2. dragonboard
-   3. linux
+
+   0. android
+   1. dragonboard
+   2. linux
  
-Choice: 1
+Choice: 0
 
 
 All available business:
-   1. dolphin
-   2. secure
-   3. karaok
 
-Choice: 1
+   0. dolphin
+   1. secure
+   2. karaok
+
+Choice: 0
 
    $ ./build.sh 
 
@@ -43,7 +43,7 @@ Choice: 1
 
    $source build/envsetup.sh
    
-   $lunch    //(dolphin_bpi_m2p-eng)
+   $lunch    //(dolphin_bpi_m2p-eng  or dolphin_bpi_m2z-eng)
    
    $extract-bsp
    
